@@ -1,9 +1,25 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Cinzel_Decorative, Cinzel, Outfit } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/Providers'
 
-const inter = Inter({ subsets: ['latin'] })
+const cinzelDecorative = Cinzel_Decorative({ 
+  subsets: ['latin'], 
+  weight: ['400', '700', '900'],
+  variable: '--font-display'
+})
+
+const cinzel = Cinzel({ 
+  subsets: ['latin'], 
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-heading'
+})
+
+const outfit = Outfit({ 
+  subsets: ['latin'], 
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-body'
+})
 
 export const metadata: Metadata = {
   title: 'SpellBlock | Commit-Reveal Word Game',
@@ -17,7 +33,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${cinzelDecorative.variable} ${cinzel.variable} ${outfit.variable} font-body bg-void-deep text-text-primary`}>
         <Providers>
           {children}
         </Providers>
