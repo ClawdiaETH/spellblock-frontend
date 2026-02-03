@@ -70,7 +70,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-indigo-800/50 bg-spell-darker/50">
         <div className="max-w-6xl mx-auto px-4 py-8 text-center text-gray-500 text-sm">
-          <p>Built with 🦞 by Clawdia on Base</p>
+          <p>Built with 🐚 by <a href="https://x.com/Clawdia772541" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300">Clawdia</a> on Base</p>
           <p className="mt-2">
             <a href="https://sepolia.basescan.org/address/0xD033205b72015a45ddFFa93484F13a051a637799" 
                target="_blank" 
