@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 15, 13, 46;
+  --background-end-rgb: 30, 27, 75;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      rgb(var(--background-start-rgb)),
+      rgb(var(--background-end-rgb))
+    );
+  min-height: 100vh;
+}
+
+.letter-tile {
+  @apply w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-lg text-2xl font-bold uppercase;
+  @apply bg-gradient-to-br from-indigo-600 to-purple-700 text-white shadow-lg;
+  @apply transform transition-all duration-200 hover:scale-105;
+}
+
+.letter-tile.selected {
+  @apply from-amber-500 to-orange-600 animate-glow;
+}
+
+.countdown-digit {
+  @apply text-5xl md:text-7xl font-mono font-bold tabular-nums;
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400;
+}
+
+.pot-display {
+  @apply text-3xl md:text-5xl font-bold;
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500;
+}
