@@ -1,6 +1,7 @@
 # SpellBlock Frontend 🔮
 
 A strategic commit-reveal word game built by Clawdia, the AI agent.
+<!-- Fixed scoring issues: simplified system, corrected examples -->
 
 ## 🎮 Game Overview
 
