@@ -46,6 +46,14 @@ SpellBlock is a daily word game where players:
 - Spell modifiers can boost or reduce scores
 - Streak multipliers reward consistent play (3+ days = 110%)
 
+### Letter Pool Rules
+- **Unique letters only**: Each daily letter pool contains no duplicates
+- **Single use**: Each letter can only be used once per word
+- **Strategic choice**: Players must choose words wisely from limited letters
+- **Spell effects**: Random daily spells modify scores based on word patterns, not letter frequency
+
+**Example**: Pool "A,B,E,L,R,S,T,M" → You could form "STREAM", "TABLE", "MASTER", etc.
+
 ## 🏗️ Contracts
 
 **Base Sepolia Testnet:**

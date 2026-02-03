@@ -176,9 +176,9 @@ export default function Home() {
                 </h5>
                 <ul className="text-text-secondary font-body text-sm leading-relaxed text-left space-y-2">
                   <li>• Random spell affects all words</li>
-                  <li>• "Double vowels"</li>
-                  <li>• "Boost 7+ letter words"</li>
-                  <li>• "Multiply words ending in S"</li>
+                  <li>• "Boost words containing E"</li>
+                  <li>• "Multiply 7+ letter words"</li>
+                  <li>• "Double score if ends with S"</li>
                 </ul>
               </div>
 
@@ -247,7 +247,11 @@ export default function Home() {
               <ul className="space-y-3 text-text-secondary font-body">
                 <li className="flex items-start">
                   <span className="text-violet-bright mr-3">•</span>
-                  <span>Use only letters from the daily pool</span>
+                  <span>Use only letters from the daily pool (each letter only once)</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-violet-bright mr-3">•</span>
+                  <span>Letter pool contains no duplicates - you create word patterns</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-violet-bright mr-3">•</span>
@@ -284,23 +288,23 @@ export default function Home() {
               <div className="grid md:grid-cols-3 gap-6 text-sm">
                 <div>
                   <h5 className="font-heading font-semibold text-violet-bright mb-3">Daily setup</h5>
-                  <p className="text-text-secondary mb-2"><strong>Letter pool:</strong> A, B, E, L, R, S, T, T</p>
-                  <p className="text-text-secondary mb-2"><strong>Spell:</strong> "Double consonants"</p>
+                  <p className="text-text-secondary mb-2"><strong>Letter pool:</strong> A, B, E, L, R, S, T, M</p>
+                  <p className="text-text-secondary mb-2"><strong>Spell:</strong> "Boost words with M"</p>
                   <p className="text-text-secondary"><strong>Total pot:</strong> 100 $CLAWDIA</p>
                 </div>
                 
                 <div>
                   <h5 className="font-heading font-semibold text-violet-bright mb-3">Your play</h5>
-                  <p className="text-text-secondary mb-2"><strong>Word chosen:</strong> "LETTER"</p>
+                  <p className="text-text-secondary mb-2"><strong>Word chosen:</strong> "STREAM"</p>
                   <p className="text-text-secondary mb-2"><strong>Stake:</strong> 10 $CLAWDIA</p>
                   <p className="text-text-secondary"><strong>Base score:</strong> 6 letters × 1pt = 6pts</p>
                 </div>
                 
                 <div>
                   <h5 className="font-heading font-semibold text-violet-bright mb-3">Final calculation</h5>
-                  <p className="text-text-secondary mb-2"><strong>Length bonus:</strong> +4pts (6 letters = +4)</p>
-                  <p className="text-text-secondary mb-2"><strong>Spell effect:</strong> TT doubled = +2pts</p>
-                  <p className="text-text-secondary"><strong>Final score:</strong> 12 points</p>
+                  <p className="text-text-secondary mb-2"><strong>Length bonus:</strong> +4pts (6+ letters = +4)</p>
+                  <p className="text-text-secondary mb-2"><strong>Spell effect:</strong> +50% for M = +5pts</p>
+                  <p className="text-text-secondary"><strong>Final score:</strong> 15 points</p>
                 </div>
               </div>
               
