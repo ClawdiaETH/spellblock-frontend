@@ -92,10 +92,25 @@ export function GameBoard() {
   if (!currentRoundId || currentRoundId === 0n) {
     return (
       <div className="max-w-4xl mx-auto p-4">
-        <div className="bg-spell-dark/50 rounded-xl p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">⏳ No active round</h2>
-          <p className="text-gray-400">
-            The first round hasn't started yet. Check back soon!
+        <div className="glass-panel p-8 text-center">
+          <h2 className="text-3xl font-display font-bold mb-4 text-amber-glow">🔮 Preparing first ritual</h2>
+          <p className="text-text-secondary text-lg mb-6 font-body">
+            The ancient spells are being prepared. The first round of SpellBlock will begin soon!
+          </p>
+          
+          <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-6">
+            <div className="bg-background-darker p-4 rounded-lg">
+              <div className="text-lg font-bold text-violet-bright mb-2">⚡ When it starts</div>
+              <div className="text-sm text-text-secondary">You'll see the letter pool appear here</div>
+            </div>
+            <div className="bg-background-darker p-4 rounded-lg">
+              <div className="text-lg font-bold text-amber-bright mb-2">💰 How to prepare</div>
+              <div className="text-text-secondary text-sm">Connect wallet & get some $CLAWDIA</div>
+            </div>
+          </div>
+
+          <p className="text-text-dim text-sm font-body">
+            Follow <a href="https://x.com/Clawdia772541" target="_blank" className="text-violet-glow hover:text-violet-bright">@Clawdia772541</a> for round announcements
           </p>
         </div>
       </div>
