@@ -47,7 +47,7 @@ export default function Home() {
                       onClick={show}
                       className="arcane-button"
                     >
-                      {isConnected ? (ensName ?? truncatedAddress) : 'Connect Grimoire'}
+                      {isConnected ? (ensName ?? truncatedAddress) : 'Connect grimoire'}
                     </button>
                   )
                 }}
@@ -84,10 +84,10 @@ export default function Home() {
                   
                   <div className="relative z-10">
                     <div className="text-sm text-text-dim font-heading uppercase tracking-widest mb-2">
-                      Round Status
+                      Round status
                     </div>
                     <div className="text-2xl font-display font-bold text-amber-glow mb-1">
-                      No Active Round
+                      No active round
                     </div>
                     <div className="text-xs text-text-secondary font-body">
                       Awaiting first spell...
@@ -99,7 +99,7 @@ export default function Home() {
               {/* Pot Display */}
               <div className="glass-panel p-6 text-center min-w-[280px]">
                 <div className="text-sm text-text-dim font-heading uppercase tracking-widest mb-2">
-                  Current Pot
+                  Current pot
                 </div>
                 <div className="text-4xl font-display font-bold text-violet-glow">
                   0 $CLAWDIA
@@ -117,7 +117,7 @@ export default function Home() {
         {/* How to Play - Mystical Phase Cards */}
         <section className="max-w-6xl mx-auto px-4 py-20">
           <h3 className="text-4xl font-display font-bold text-center mb-4 text-amber-glow">
-            The Arcane Ritual
+            The arcane ritual
           </h3>
           <p className="text-center text-text-secondary font-body mb-16 max-w-2xl mx-auto">
             Master the ancient art of word-weaving through three sacred phases
@@ -139,7 +139,7 @@ export default function Home() {
               </div>
               
               <h4 className="text-xl font-heading font-bold mb-3 text-violet-bright">
-                Commit Phase
+                Commit phase
               </h4>
               <p className="text-text-secondary font-body text-sm leading-relaxed">
                 Form a word from the mystical letter pool. Submit a hidden commitment sealed with your $CLAWDIA stake.
@@ -158,7 +158,7 @@ export default function Home() {
               </div>
               
               <h4 className="text-xl font-heading font-bold mb-3 text-amber-bright">
-                Spell Reveal
+                Spell reveal
               </h4>
               <p className="text-text-secondary font-body text-sm leading-relaxed">
                 The day's Spell manifests! This ancient magic might boost your word's power or shatter its essence.
@@ -177,7 +177,7 @@ export default function Home() {
               </div>
               
               <h4 className="text-xl font-heading font-bold mb-3 text-violet-bright">
-                Reveal & Claim
+                Reveal & claim
               </h4>
               <p className="text-text-secondary font-body text-sm leading-relaxed">
                 Unveil your word to claim its true score. The most powerful spellcasters share the sacred treasure!
@@ -210,7 +210,7 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className="text-violet-glow hover:text-violet-bright transition-colors font-body"
                 >
-                  📜 View Sacred Contract
+                  📜 View sacred contract
                 </a>
                 <a 
                   href="https://x.com/Clawdia772541" 
@@ -218,7 +218,7 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className="text-violet-glow hover:text-violet-bright transition-colors font-body"
                 >
-                  🐚 Follow the Oracle
+                  🐚 Follow the oracle
                 </a>
               </div>
             </div>

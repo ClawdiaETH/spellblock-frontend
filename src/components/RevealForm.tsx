@@ -96,7 +96,7 @@ export function RevealForm({ roundId, spellId, spellParam, onRevealSuccess }: Re
     <div className="space-y-4">
       {/* Spell Display */}
       <div className="bg-gradient-to-r from-purple-900/50 to-indigo-900/50 rounded-xl p-6 text-center border border-purple-500/30">
-        <p className="text-sm text-gray-400 mb-2">The Spell Is...</p>
+        <p className="text-sm text-gray-400 mb-2">The spell is...</p>
         <h2 className="text-3xl font-bold text-purple-300 mb-2">
           ✨ {SPELL_NAMES[spellId] || 'UNKNOWN'} ✨
         </h2>
@@ -108,7 +108,7 @@ export function RevealForm({ roundId, spellId, spellParam, onRevealSuccess }: Re
 
       {/* Reveal Form */}
       <form onSubmit={handleSubmit} className="bg-spell-dark/50 rounded-xl p-6 space-y-4">
-        <h3 className="text-xl font-bold text-center mb-4">Reveal Your Word</h3>
+        <h3 className="text-xl font-bold text-center mb-4">Reveal your word</h3>
 
         {autoLoaded && (
           <p className="text-green-400 text-sm text-center">
@@ -117,7 +117,7 @@ export function RevealForm({ roundId, spellId, spellParam, onRevealSuccess }: Re
         )}
         
         <div>
-          <label className="block text-sm text-gray-400 mb-1">Your Word</label>
+          <label className="block text-sm text-gray-400 mb-1">Your word</label>
           <input
             type="text"
             value={word}
@@ -128,7 +128,7 @@ export function RevealForm({ roundId, spellId, spellParam, onRevealSuccess }: Re
         </div>
 
         <div>
-          <label className="block text-sm text-gray-400 mb-1">Your Salt</label>
+          <label className="block text-sm text-gray-400 mb-1">Your salt</label>
           <input
             type="text"
             value={salt}
@@ -147,7 +147,7 @@ export function RevealForm({ roundId, spellId, spellParam, onRevealSuccess }: Re
           disabled={isRevealing}
           className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 py-3 rounded-lg font-bold transition-all"
         >
-          {isRevealing ? 'Revealing...' : 'Reveal Word'}
+          {isRevealing ? 'Revealing...' : 'Reveal word'}
         </button>
       </form>
     </div>

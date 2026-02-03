@@ -35,9 +35,10 @@
 }
 
 /* Font utilities */
-.font-display { font-family: var(--font-display), serif; }
-.font-heading { font-family: var(--font-heading), serif; }
-.font-body { font-family: var(--font-body), sans-serif; }
+.font-display { font-family: var(--font-main), sans-serif; }
+.font-heading { font-family: var(--font-main), sans-serif; }
+.font-body { font-family: var(--font-main), sans-serif; }
+.font-main { font-family: var(--font-main), sans-serif; }
 
 /* Color utilities */
 .text-text-primary { color: var(--text-primary); }

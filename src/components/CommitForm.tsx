@@ -170,10 +170,10 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
 
   return (
     <form onSubmit={handleSubmit} className="bg-spell-dark/50 rounded-xl p-6 space-y-4">
-      <h3 className="text-xl font-bold text-center mb-4">Submit Your Word</h3>
+      <h3 className="text-xl font-bold text-center mb-4">Submit your word</h3>
       
       <div>
-        <label className="block text-sm text-gray-400 mb-1">Your Word</label>
+        <label className="block text-sm text-gray-400 mb-1">Your word</label>
         <input
           type="text"
           value={word}
@@ -185,7 +185,7 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
 
       <div>
         <label className="block text-sm text-gray-400 mb-1">
-          Stake Amount ($CLAWDIA)
+          Stake amount ($CLAWDIA)
         </label>
         <input
           type="number"
@@ -215,7 +215,7 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
         ) : step === 'approve' ? (
           'Approve $CLAWDIA'
         ) : (
-          'Submit Commitment'
+          'Submit commitment'
         )}
       </button>
 

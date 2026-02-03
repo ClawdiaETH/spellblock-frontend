@@ -93,7 +93,7 @@ export function GameBoard() {
     return (
       <div className="max-w-4xl mx-auto p-4">
         <div className="bg-spell-dark/50 rounded-xl p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">⏳ No Active Round</h2>
+          <h2 className="text-2xl font-bold mb-4">⏳ No active round</h2>
           <p className="text-gray-400">
             The first round hasn't started yet. Check back soon!
           </p>
@@ -122,7 +122,7 @@ export function GameBoard() {
       {/* Letter Pool */}
       {letterPool && (
         <div className="bg-spell-dark/50 rounded-xl p-6">
-          <h3 className="text-center text-gray-400 text-sm mb-4">TODAY'S LETTERS</h3>
+          <h3 className="text-center text-gray-400 text-sm mb-4">Today's letters</h3>
           <LetterPool 
             letters={letterPool} 
             selectedLetters="" 
@@ -136,7 +136,7 @@ export function GameBoard() {
           <div className="grid md:grid-cols-2 gap-4">
             <Countdown 
               deadline={Number(round.commitDeadline)} 
-              label="Commit Phase Ends In" 
+              label="Commit phase ends in" 
             />
             <PotDisplay 
               totalStaked={round.totalStaked}
@@ -147,7 +147,7 @@ export function GameBoard() {
 
           {hasCommitted ? (
             <div className="bg-green-900/30 border border-green-500/30 rounded-xl p-6 text-center">
-              <p className="text-green-400 text-xl font-bold mb-2">✓ You've Committed!</p>
+              <p className="text-green-400 text-xl font-bold mb-2">✓ You've committed!</p>
               <p className="text-gray-400">
                 Wait for the commit phase to close, then come back to reveal your word.
               </p>
@@ -172,7 +172,7 @@ export function GameBoard() {
         <>
           <Countdown 
             deadline={Number(round.revealDeadline)} 
-            label="Reveal Phase Ends In" 
+            label="Reveal phase ends in" 
           />
 
           {hasCommitted && !hasRevealed && currentRoundId ? (
@@ -187,7 +187,7 @@ export function GameBoard() {
             />
           ) : hasRevealed ? (
             <div className="bg-green-900/30 border border-green-500/30 rounded-xl p-6 text-center">
-              <p className="text-green-400 text-xl font-bold mb-2">✓ Word Revealed!</p>
+              <p className="text-green-400 text-xl font-bold mb-2">✓ Word revealed!</p>
               <p className="text-gray-400">
                 Your score: {commitment?.effectiveScore.toString()} points
               </p>
@@ -205,14 +205,14 @@ export function GameBoard() {
 
       {phase === 'finalized' && round && (
         <div className="bg-spell-dark/50 rounded-xl p-6 text-center">
-          <h2 className="text-2xl font-bold mb-4">Round Complete!</h2>
+          <h2 className="text-2xl font-bold mb-4">Round complete!</h2>
           {commitment && commitment.payout > 0n && !commitment.claimed && (
             <div className="bg-amber-900/30 border border-amber-500/30 rounded-xl p-4 mb-4">
               <p className="text-amber-400 font-bold">
                 You won {(Number(commitment.payout) / 1e18).toLocaleString()} $CLAWDIA!
               </p>
               <button className="mt-2 bg-amber-600 hover:bg-amber-500 px-6 py-2 rounded-lg font-bold">
-                Claim Reward
+                Claim reward
               </button>
             </div>
           )}

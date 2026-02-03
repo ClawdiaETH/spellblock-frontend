@@ -8,9 +8,10 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'display': ['var(--font-display)', 'serif'],
-        'heading': ['var(--font-heading)', 'serif'],
-        'body': ['var(--font-body)', 'sans-serif'],
+        'display': ['var(--font-main)', 'sans-serif'],
+        'heading': ['var(--font-main)', 'sans-serif'],
+        'body': ['var(--font-main)', 'sans-serif'],
+        'main': ['var(--font-main)', 'sans-serif'],
       },
       colors: {
         'void': {
