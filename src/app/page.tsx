@@ -213,23 +213,17 @@ export default function Home() {
               
               <div className="space-y-4">
                 <div>
-                  <h5 className="text-lg font-heading font-semibold text-violet-bright mb-2">Base letter values</h5>
-                  <p className="text-text-secondary font-body text-sm mb-3">Scrabble-style point system:</p>
-                  <div className="grid grid-cols-2 gap-2 text-sm font-mono">
-                    <div className="text-text-dim">A, E, I, O, U, L, N, S, T, R = 1pt</div>
-                    <div className="text-text-dim">D, G = 2pts</div>
-                    <div className="text-text-dim">B, C, M, P = 3pts</div>
-                    <div className="text-text-dim">F, H, V, W, Y = 4pts</div>
-                    <div className="text-text-dim">K = 5pts</div>
-                    <div className="text-text-dim">J, X = 8pts</div>
-                    <div className="text-text-dim">Q, Z = 10pts</div>
+                  <h5 className="text-lg font-heading font-semibold text-violet-bright mb-2">Base scoring</h5>
+                  <p className="text-text-secondary font-body text-sm mb-3">Simple and fair:</p>
+                  <div className="text-text-dim font-mono">
+                    <div>1 point per letter</div>
                   </div>
                 </div>
 
                 <div>
                   <h5 className="text-lg font-heading font-semibold text-violet-bright mb-2">Length bonus</h5>
-                  <p className="text-text-secondary font-body text-sm">+5 points for each letter over 4</p>
-                  <p className="text-text-dim font-mono text-xs">Example: 7-letter word gets +15 bonus</p>
+                  <p className="text-text-secondary font-body text-sm">+2 points for each letter over 4</p>
+                  <p className="text-text-dim font-mono text-xs">Example: 7-letter word gets +6 bonus</p>
                 </div>
 
                 <div>
@@ -290,23 +284,23 @@ export default function Home() {
               <div className="grid md:grid-cols-3 gap-6 text-sm">
                 <div>
                   <h5 className="font-heading font-semibold text-violet-bright mb-3">Daily setup</h5>
-                  <p className="text-text-secondary mb-2"><strong>Letter pool:</strong> A, B, C, E, L, R, S, T</p>
+                  <p className="text-text-secondary mb-2"><strong>Letter pool:</strong> A, B, E, L, R, S, T, T</p>
                   <p className="text-text-secondary mb-2"><strong>Spell:</strong> "Double consonants"</p>
                   <p className="text-text-secondary"><strong>Total pot:</strong> 100 $CLAWDIA</p>
                 </div>
                 
                 <div>
                   <h5 className="font-heading font-semibold text-violet-bright mb-3">Your play</h5>
-                  <p className="text-text-secondary mb-2"><strong>Word chosen:</strong> "TABLES"</p>
+                  <p className="text-text-secondary mb-2"><strong>Word chosen:</strong> "LETTER"</p>
                   <p className="text-text-secondary mb-2"><strong>Stake:</strong> 10 $CLAWDIA</p>
-                  <p className="text-text-secondary"><strong>Base score:</strong> T(1) + A(1) + B(3) + L(1) + E(1) + S(1) = 8pts</p>
+                  <p className="text-text-secondary"><strong>Base score:</strong> 6 letters × 1pt = 6pts</p>
                 </div>
                 
                 <div>
                   <h5 className="font-heading font-semibold text-violet-bright mb-3">Final calculation</h5>
-                  <p className="text-text-secondary mb-2"><strong>Length bonus:</strong> +10 (6 letters)</p>
-                  <p className="text-text-secondary mb-2"><strong>Spell effect:</strong> B, T, L, S doubled = +6pts</p>
-                  <p className="text-text-secondary"><strong>Final score:</strong> 24 points</p>
+                  <p className="text-text-secondary mb-2"><strong>Length bonus:</strong> +4pts (6 letters = +4)</p>
+                  <p className="text-text-secondary mb-2"><strong>Spell effect:</strong> TT doubled = +2pts</p>
+                  <p className="text-text-secondary"><strong>Final score:</strong> 12 points</p>
                 </div>
               </div>
               
