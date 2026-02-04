@@ -70,8 +70,19 @@ export function GameBoard() {
     chainId,
   })
 
-  // Get current phase from round data
-  const phase = round ? round.phase : RoundPhase.Inactive
+  // Compute phase from timestamps (more reliable than stored phase)
+  const computePhase = () => {
+    if (!round || !round.startTime) return RoundPhase.Inactive
+    const start = Number(round.startTime)
+    const commitEnd = Number(round.commitDeadline)
+    const revealEnd = Number(round.revealDeadline)
+    
+    if (currentTime < start) return RoundPhase.Inactive
+    if (currentTime >= start && currentTime < commitEnd) return RoundPhase.Commit
+    if (currentTime >= commitEnd && currentTime < revealEnd) return RoundPhase.Reveal
+    return RoundPhase.Finalized
+  }
+  const phase = computePhase()
 
   // Decode letter pool from bytes8
   const letterPool = round?.letterPool ? 
