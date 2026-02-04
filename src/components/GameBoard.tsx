@@ -41,6 +41,7 @@ export function GameBoard() {
     address: contracts.spellBlockCore,
     abi: SPELLBLOCK_CORE_ABI,
     functionName: 'currentRoundId',
+    chainId,
   })
 
   // Get round data
@@ -49,6 +50,7 @@ export function GameBoard() {
     abi: SPELLBLOCK_CORE_ABI,
     functionName: 'rounds',
     args: currentRoundId ? [currentRoundId] : undefined,
+    chainId,
   })
 
   // Get user's commitment
@@ -57,6 +59,7 @@ export function GameBoard() {
     abi: SPELLBLOCK_CORE_ABI,
     functionName: 'commitments',
     args: currentRoundId && address ? [currentRoundId, address] : undefined,
+    chainId,
   })
 
   // Get rollover amount
@@ -64,6 +67,7 @@ export function GameBoard() {
     address: contracts.spellBlockCore,
     abi: SPELLBLOCK_CORE_ABI,
     functionName: 'rolloverAmount',
+    chainId,
   })
 
   // Get current phase from round data
