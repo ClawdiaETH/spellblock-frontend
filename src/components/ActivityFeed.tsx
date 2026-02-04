@@ -24,11 +24,15 @@ export function ActivityFeed({ roundId }: { roundId?: bigint }) {
 
     const fetchPastEvents = async () => {
       try {
+        // Get current block and search last 10000 blocks (about 5 hours on Base)
+        const currentBlock = await publicClient.getBlockNumber()
+        const fromBlock = currentBlock > 10000n ? currentBlock - 10000n : 0n
+        
         const logs = await publicClient.getLogs({
           address: contracts.spellBlockCore,
           event: parseAbiItem('event CommitSubmitted(uint256 indexed roundId, address indexed player, uint256 stake, uint256 timestamp, uint256 streak)'),
           args: { roundId },
-          fromBlock: 'earliest',
+          fromBlock,
           toBlock: 'latest',
         })
 
