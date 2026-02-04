@@ -117,16 +117,6 @@ export function GameBoard() {
   // Min stake for v3 spec (1M $CLAWDIA)
   const minStake = BigInt('1000000000000000000000000') // 1,000,000 $CLAWDIA
 
-  // Debug info
-  const debugInfo = {
-    currentRoundId: currentRoundId?.toString(),
-    hasRound: !!round,
-    hasRoundData: !!roundData,
-    startTime: roundData?.startTime?.toString(),
-    commitDeadline: roundData?.commitDeadline?.toString(),
-    currentTime,
-    computedPhase: phase,
-  }
 
   if (!currentRoundId || currentRoundId === 0n || phase === RoundPhase.Inactive) {
     return (
