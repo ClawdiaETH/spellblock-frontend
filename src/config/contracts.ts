@@ -26,25 +26,26 @@ export const CONTRACTS = {
 export const SPELLBLOCK_CORE_ABI = [
   // Read functions
   { type: 'function', name: 'currentRoundId', inputs: [], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
-  { type: 'function', name: 'rounds', inputs: [{ name: 'roundId', type: 'uint256' }], outputs: [{ type: 'tuple', components: [
-    { name: 'roundId', type: 'uint256' },
-    { name: 'startTime', type: 'uint256' },
-    { name: 'commitDeadline', type: 'uint256' },
-    { name: 'revealDeadline', type: 'uint256' },
-    { name: 'letterPool', type: 'bytes8' },
-    { name: 'rulerCommitHash', type: 'bytes32' },
-    { name: 'validLengths', type: 'uint8[3]' },
-    { name: 'spellId', type: 'uint8' },
-    { name: 'spellParam', type: 'bytes32' },
-    { name: 'seedHash', type: 'bytes32' },
-    { name: 'revealedSeed', type: 'bytes32' },
-    { name: 'totalPot', type: 'uint256' },
-    { name: 'commitCount', type: 'uint256' },
-    { name: 'revealCount', type: 'uint256' },
-    { name: 'rolloverFromPrevious', type: 'uint256' },
-    { name: 'jackpotBonus', type: 'uint256' },
-    { name: 'phase', type: 'uint8' },
-  ]}], stateMutability: 'view' },
+  // Try flat uint256 array approach - decode first 4 values for phase calculation
+  { type: 'function', name: 'rounds', inputs: [{ name: 'roundId', type: 'uint256' }], outputs: [
+    { type: 'uint256' }, // roundId
+    { type: 'uint256' }, // startTime
+    { type: 'uint256' }, // commitDeadline  
+    { type: 'uint256' }, // revealDeadline
+    { type: 'bytes32' }, // letterPool (padded)
+    { type: 'bytes32' }, // rulerCommitHash
+    { type: 'bytes32' }, // validLengths packed as bytes32
+    { type: 'bytes32' }, // spellId + padding
+    { type: 'bytes32' }, // spellParam
+    { type: 'bytes32' }, // seedHash
+    { type: 'bytes32' }, // revealedSeed
+    { type: 'uint256' }, // totalPot
+    { type: 'uint256' }, // commitCount
+    { type: 'uint256' }, // revealCount
+    { type: 'uint256' }, // rolloverFromPrevious
+    { type: 'uint256' }, // jackpotBonus  
+    { type: 'uint256' }, // phase (read as uint256 for safety)
+  ], stateMutability: 'view' },
   { type: 'function', name: 'commitments', inputs: [{ name: 'roundId', type: 'uint256' }, { name: 'player', type: 'address' }], outputs: [{ type: 'tuple', components: [
     { name: 'commitHash', type: 'bytes32' },
     { name: 'stake', type: 'uint256' },

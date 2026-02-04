@@ -70,12 +70,26 @@ export function GameBoard() {
     chainId,
   })
 
+  // Parse round data from array response
+  // [roundId, startTime, commitDeadline, revealDeadline, letterPool, ...]
+  const roundData = round ? {
+    roundId: round[0] as bigint,
+    startTime: round[1] as bigint,
+    commitDeadline: round[2] as bigint,
+    revealDeadline: round[3] as bigint,
+    letterPool: round[4] as `0x${string}`,
+    totalPot: round[11] as bigint,
+    commitCount: round[12] as bigint,
+    revealCount: round[13] as bigint,
+    phase: round[16] as bigint,
+  } : null
+
   // Compute phase from timestamps (more reliable than stored phase)
   const computePhase = () => {
-    if (!round || !round.startTime) return RoundPhase.Inactive
-    const start = Number(round.startTime)
-    const commitEnd = Number(round.commitDeadline)
-    const revealEnd = Number(round.revealDeadline)
+    if (!roundData || !roundData.startTime) return RoundPhase.Inactive
+    const start = Number(roundData.startTime)
+    const commitEnd = Number(roundData.commitDeadline)
+    const revealEnd = Number(roundData.revealDeadline)
     
     if (currentTime < start) return RoundPhase.Inactive
     if (currentTime >= start && currentTime < commitEnd) return RoundPhase.Commit
@@ -84,15 +98,15 @@ export function GameBoard() {
   }
   const phase = computePhase()
 
-  // Decode letter pool from bytes8
-  const letterPool = round?.letterPool ? 
-    Buffer.from(round.letterPool.slice(2), 'hex').toString('utf-8').replace(/\0/g, '') : 
+  // Decode letter pool from bytes32 (padded bytes8)
+  const letterPool = roundData?.letterPool ? 
+    Buffer.from(roundData.letterPool.slice(2, 18), 'hex').toString('utf-8').replace(/\0/g, '') : 
     ''
 
-  // Check if spell and ruler are revealed (after commit phase)
-  const isSpellRevealed = round?.revealedSeed !== '0x0000000000000000000000000000000000000000000000000000000000000000'
-  const spellName = isSpellRevealed && round ? SPELL_NAMES[round.spellId] : null
-  const spellDescription = isSpellRevealed && round ? SPELL_DESCRIPTIONS[round.spellId] : null
+  // Check if spell and ruler are revealed (after commit phase) - simplified for now
+  const isSpellRevealed = false // TODO: check revealedSeed once we have proper struct parsing
+  const spellName = null
+  const spellDescription = null
 
   // Has user committed?
   const hasCommitted = commitment && commitment.commitHash !== '0x0000000000000000000000000000000000000000000000000000000000000000'
@@ -105,8 +119,9 @@ export function GameBoard() {
   const debugInfo = {
     currentRoundId: currentRoundId?.toString(),
     hasRound: !!round,
-    startTime: round?.startTime?.toString(),
-    commitDeadline: round?.commitDeadline?.toString(),
+    hasRoundData: !!roundData,
+    startTime: roundData?.startTime?.toString(),
+    commitDeadline: roundData?.commitDeadline?.toString(),
     currentTime,
     computedPhase: phase,
   }
