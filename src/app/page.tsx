@@ -233,15 +233,15 @@ export default function Home() {
             <div className="grid md:grid-cols-3 gap-6 text-sm">
               <div>
                 <div className="text-violet-glow font-bold text-lg mb-2">Daily pot share</div>
-                <p className="text-text-secondary">Split with other top scorers<br/>(typical pots: 50M-500M $CLAWDIA)</p>
+                <p className="text-text-secondary">90% of pot split by score<br/>(typical pots: 10M-100M $CLAWDIA)</p>
               </div>
               <div>
                 <div className="text-violet-glow font-bold text-lg mb-2">Streak bonuses</div>
                 <p className="text-text-secondary">3+ wins: 110% | 7+ wins: 125%<br/>14+ wins: 150% multiplier!</p>
               </div>
               <div>
-                <div className="text-violet-glow font-bold text-lg mb-2">Jackpot triggers</div>
-                <p className="text-text-secondary">When pot exceeds 1000 $CLAWDIA<br/>Winner takes extra rewards</p>
+                <div className="text-violet-glow font-bold text-lg mb-2">Consolation pool</div>
+                <p className="text-text-secondary">Pass spell but miss ruler?<br/>Share 10% consolation (capped at stake)</p>
               </div>
             </div>
           </div>
@@ -333,49 +333,55 @@ export default function Home() {
           {/* Example Winning Scenario */}
           <div className="glass-panel p-8 max-w-4xl mx-auto mt-16">
             <h4 className="text-2xl font-heading font-bold text-center mb-6 text-amber-bright">
-              🏆 Example: How you could win 85 $CLAWDIA today
+              🏆 Example: Turn 2M into 8M
             </h4>
             
             <div className="grid md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <div className="text-center">
-                  <div className="text-lg font-bold text-violet-bright mb-2">Today's Setup</div>
+                  <div className="text-lg font-bold text-violet-bright mb-2">Today's Round</div>
                   <div className="bg-background-darker p-4 rounded-lg font-mono text-sm space-y-2">
                     <div>📝 Letter pool: <span className="text-amber-glow">A,B,E,L,R,S,T,T</span></div>
-                    <div>🪄 Spell: <span className="text-violet-bright">Gem (need adjacent doubles)</span></div>
-                    <div>📏 Ruler lengths: <span className="text-amber-bright">5, 7, 10</span></div>
-                    <div>💰 Total pot: <span className="text-green-400">170M $CLAWDIA</span></div>
-                    <div>👥 Players: <span className="text-text-secondary">8 committed</span></div>
+                    <div>🪄 Spell: <span className="text-violet-bright">??? (hidden)</span></div>
+                    <div>📏 Ruler: <span className="text-amber-bright">??? (hidden)</span></div>
+                    <div>💰 Total pot: <span className="text-green-400">20M $CLAWDIA</span></div>
+                    <div>👥 Players: <span className="text-text-secondary">10 committed</span></div>
                   </div>
                 </div>
               </div>
               
               <div className="space-y-4">
                 <div className="text-center">
-                  <div className="text-lg font-bold text-violet-bright mb-2">Your Winning Play</div>
+                  <div className="text-lg font-bold text-violet-bright mb-2">Your Play</div>
                   <div className="bg-background-darker p-4 rounded-lg font-mono text-sm space-y-2">
                     <div>🎯 Your word: <span className="text-amber-glow">"LETTERS"</span></div>
-                    <div>💎 Your stake: <span className="text-text-secondary">15M $CLAWDIA</span></div>
-                    <div>📊 Base score: <span className="text-text-secondary">7 points (1 per letter)</span></div>
-                    <div>⚡ Length match: <span className="text-green-400">✓ (7 in ruler)</span></div>
-                    <div>🪄 Spell pass: <span className="text-green-400">✓ (Gem: has TT)</span></div>
-                    <div>🔥 Streak bonus: <span className="text-violet-bright">×1.25 (7-day streak)</span></div>
-                    <div>🏆 Final score: <span className="text-green-400">8.75 points (highest!)</span></div>
+                    <div>💎 Your stake: <span className="text-text-secondary">2M $CLAWDIA</span></div>
+                    <div>📊 Base score: <span className="text-text-secondary">7 points</span></div>
+                    <div>🔥 Your streak: <span className="text-violet-bright">5 days (×1.10)</span></div>
+                    <div>🏆 Final score: <span className="text-green-400">7.7 points</span></div>
                   </div>
                 </div>
               </div>
             </div>
-            
-            <div className="text-center mt-6 p-4 bg-green-900/20 rounded-lg border border-green-500/30">
-              <div className="text-2xl font-bold text-green-400 mb-2">Result: You win 85M $CLAWDIA!</div>
+
+            <div className="text-center mt-6 p-4 bg-violet-900/20 rounded-lg border border-violet-500/30">
+              <div className="text-lg font-bold text-violet-bright mb-2">⚡ Reveal moment: Spell = Gem, Ruler = 5, 7, 11</div>
               <p className="text-text-secondary text-sm">
-                As the highest scorer (8.75 points), you get the largest share of the 90% prize pool. Your 15M $CLAWDIA stake + 85M $CLAWDIA winnings = 100M total!
+                "LETTERS" has TT (passes Gem) and is 7 letters (matches ruler). You're in!
+              </p>
+            </div>
+            
+            <div className="text-center mt-4 p-4 bg-green-900/20 rounded-lg border border-green-500/30">
+              <div className="text-2xl font-bold text-green-400 mb-2">Result: You win ~8M $CLAWDIA!</div>
+              <p className="text-text-secondary text-sm">
+                20M pot → 3% treasury (0.6M) → 19.4M remains → 90% winners pool (17.5M)<br/>
+                You had highest score among 3 valid winners → largest share of 17.5M pool!
               </p>
             </div>
             
             <div className="text-center mt-4">
               <p className="text-text-dim text-sm italic">
-                "I spent 30 seconds and turned 15 $CLAWDIA into 100. This game is addictive!" - @wordwizard_base
+                4x return in one round. Skill + conviction = rewards.
               </p>
             </div>
           </div>
@@ -399,8 +405,8 @@ export default function Home() {
                 <div className="text-text-dim">Longer words win</div>
               </div>
               <div>
-                <div className="font-mono text-violet-bright mb-1">+ spell bonus</div>
-                <div className="text-text-dim">Spells can multiply score</div>
+                <div className="font-mono text-violet-bright mb-1">+ streak ×1.10-1.50</div>
+                <div className="text-text-dim">Win streaks multiply</div>
               </div>
             </div>
           </div>
