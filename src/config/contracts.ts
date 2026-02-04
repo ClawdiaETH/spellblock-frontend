@@ -2,14 +2,15 @@ import { base, baseSepolia } from 'viem/chains'
 
 export const CONTRACTS = {
   [base.id]: {
-    spellBlockCore: '0x0000000000000000000000000000000000000000' as const, // TBD - main game contract
-    spellBlockGame: '0x0000000000000000000000000000000000000000' as const, // Alias for spellBlockCore
-    spellBlockTreasury: '0x0000000000000000000000000000000000000000' as const, // TBD - treasury contract
-    spellBlockScoring: '0x0000000000000000000000000000000000000000' as const, // TBD - scoring contract
+    spellBlockCore: '0x4b8bf9004Ba309EB0169a97821D0eD993AF37961' as const, // SpellBlockGame mainnet 2026-02-04
+    spellBlockGame: '0x4b8bf9004Ba309EB0169a97821D0eD993AF37961' as const, // Alias for spellBlockCore
+    spellBlockTreasury: '0x26B1999085A4F11DC923804f7B39993d21D8bBc7' as const, // StakerRewardDistributor
+    spellBlockScoring: '0x8DC86F87d96e7227CBb955d5fF716F427EBa496f' as const, // SpellRegistry
     clawdiaToken: '0xbbd9aDe16525acb4B336b6dAd3b9762901522B07' as const,
-    dictionaryVerifier: '0x0000000000000000000000000000000000000000' as const, // TBD
-    streakTracker: '0x0000000000000000000000000000000000000000' as const, // TBD
+    dictionaryVerifier: '0xC7626E8f33e90540664C5717c7aEAe636D5f2Fb4' as const, // DictionaryVerifier
+    streakTracker: '0x0000000000000000000000000000000000000000' as const, // Embedded in game
     seasonAccumulator: '0x0000000000000000000000000000000000000000' as const, // TBD
+    spellEngine: '0x5bE28ab70A71c63825E53a9956ccBD916E556C5C' as const, // SpellEngine
   },
   [baseSepolia.id]: {
     spellBlockCore: '0xaB9bae309759f8589E9772b21cD25E1dC869137B' as const, // v3 redeployed 2026-02-03

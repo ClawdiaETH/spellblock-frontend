@@ -8,6 +8,6 @@ const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '3a8170812
 export const config = getDefaultConfig({
   appName: 'SpellBlock',
   projectId,
-  chains: [baseSepolia, base], // Sepolia first for testnet
+  chains: [base, baseSepolia], // Mainnet first for production launch 2026-02-04
   ssr: false, // We handle SSR manually in Providers
 })
