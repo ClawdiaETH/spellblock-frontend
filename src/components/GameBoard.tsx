@@ -69,7 +69,7 @@ export function GameBoard() {
   // Get current phase from round data
   const phase = round ? round.phase : RoundPhase.Inactive
 
-  // Decode letter pool from bytes12
+  // Decode letter pool from bytes8
   const letterPool = round?.letterPool ? 
     Buffer.from(round.letterPool.slice(2), 'hex').toString('utf-8').replace(/\0/g, '') : 
     ''

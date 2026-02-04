@@ -350,7 +350,7 @@ export default function Home() {
                 <div className="text-center">
                   <div className="text-lg font-bold text-violet-bright mb-2">Today's Round</div>
                   <div className="bg-background-darker p-4 rounded-lg font-mono text-sm space-y-2">
-                    <div>📝 Letter pool: <span className="text-amber-glow">A,B,D,E,I,L,M,N,O,R,S,T</span></div>
+                    <div>📝 Letter pool: <span className="text-amber-glow">A,D,E,I,O,R,S,T</span></div>
                     <div>🪄 Spell: <span className="text-violet-bright">??? (hidden)</span></div>
                     <div>📏 Ruler: <span className="text-amber-bright">??? (hidden)</span></div>
                     <div>💰 Total pot: <span className="text-green-400">20M $CLAWDIA</span></div>
