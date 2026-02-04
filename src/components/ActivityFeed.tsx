@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useWatchContractEvent } from 'wagmi'
+import { useWatchContractEvent, usePublicClient } from 'wagmi'
 import { base } from 'viem/chains'
 import { CONTRACTS, SPELLBLOCK_CORE_ABI } from '@/config/contracts'
-import { formatUnits } from 'viem'
+import { formatUnits, parseAbiItem } from 'viem'
 
 interface CommitActivity {
   player: string
@@ -17,6 +17,38 @@ interface CommitActivity {
 export function ActivityFeed({ roundId }: { roundId?: bigint }) {
   const [activities, setActivities] = useState<CommitActivity[]>([])
   const contracts = CONTRACTS[base.id]
+  const publicClient = usePublicClient({ chainId: base.id })
+
+  // Fetch past events on mount
+  useEffect(() => {
+    if (!roundId || !publicClient) return
+
+    const fetchPastEvents = async () => {
+      try {
+        const logs = await publicClient.getLogs({
+          address: contracts.spellBlockCore,
+          event: parseAbiItem('event PlayerCommitted(uint256 indexed roundId, address indexed player, uint256 stake, uint256 newTotalPot, uint256 newCommitCount)'),
+          args: { roundId },
+          fromBlock: 'earliest',
+          toBlock: 'latest',
+        })
+
+        const pastActivities = logs.map(log => ({
+          player: log.args.player as string,
+          stake: log.args.stake as bigint,
+          timestamp: Date.now(),
+          totalPot: log.args.newTotalPot as bigint,
+          commitCount: Number(log.args.newCommitCount),
+        }))
+
+        setActivities(pastActivities.reverse().slice(0, 10))
+      } catch (error) {
+        console.error('Failed to fetch past events:', error)
+      }
+    }
+
+    fetchPastEvents()
+  }, [roundId, publicClient, contracts.spellBlockCore])
 
   // Watch for new commits
   useWatchContractEvent({
@@ -33,7 +65,7 @@ export function ActivityFeed({ roundId }: { roundId?: bigint }) {
         totalPot: log.args.newTotalPot!,
         commitCount: Number(log.args.newCommitCount!),
       }))
-      setActivities(prev => [...newActivities, ...prev].slice(0, 10)) // Keep last 10
+      setActivities(prev => [...newActivities, ...prev].slice(0, 10))
     }
   })
 
