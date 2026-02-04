@@ -1,12 +1,12 @@
 'use client'
 
 import { useReadContract } from 'wagmi'
-import { base } from 'viem/chains'
+import { baseSepolia } from 'viem/chains'
 import { CONTRACTS, SPELLBLOCK_TREASURY_ABI } from '@/config/contracts'
 import { formatUnits } from 'viem'
 
 export function BurnCounter() {
-  const contracts = CONTRACTS[base.id]
+  const contracts = CONTRACTS[baseSepolia.id]
 
   const { data: totalBurned } = useReadContract({
     address: contracts.spellBlockTreasury,

@@ -1,7 +1,7 @@
 'use client'
 
-import { useReadContract, useAccount } from 'wagmi'
-import { base } from 'viem/chains'
+import { useReadContract, useAccount, useChainId } from 'wagmi'
+import { baseSepolia } from 'viem/chains'
 import { CONTRACTS, SPELLBLOCK_CORE_ABI, SPELL_NAMES, SPELL_DESCRIPTIONS } from '@/config/contracts'
 import { LetterPool } from './LetterPool'
 import { Countdown } from './Countdown'
@@ -24,7 +24,7 @@ enum RoundPhase {
 
 export function GameBoard() {
   const { address } = useAccount()
-  const chainId = base.id
+  const chainId = baseSepolia.id // Testnet for now
   const contracts = CONTRACTS[chainId]
   const [currentTime, setCurrentTime] = useState(Math.floor(Date.now() / 1000))
 
