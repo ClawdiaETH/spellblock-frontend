@@ -1,5 +1,5 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
-import { baseSepolia, base } from 'wagmi/chains'
+import { base } from 'wagmi/chains'
 
 // WalletConnect Cloud Project ID - get one at https://cloud.walletconnect.com
 // Using a demo ID for development - should be replaced for production
@@ -8,6 +8,6 @@ const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '3a8170812
 export const config = getDefaultConfig({
   appName: 'SpellBlock',
   projectId,
-  chains: [base, baseSepolia], // Mainnet first for production launch 2026-02-04
+  chains: [base], // Mainnet only for production
   ssr: false, // We handle SSR manually in Providers
 })
