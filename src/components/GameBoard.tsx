@@ -81,6 +81,8 @@ export function GameBoard() {
     totalPot: round[11] as bigint,
     commitCount: round[12] as bigint,
     revealCount: round[13] as bigint,
+    rolloverFromPrevious: round[14] as bigint,
+    jackpotBonus: round[15] as bigint,
     phase: round[16] as bigint,
   } : null
 
