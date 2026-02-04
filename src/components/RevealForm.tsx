@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import { baseSepolia } from 'viem/chains'
+import { base } from 'viem/chains'
 import { CONTRACTS, SPELLBLOCK_ABI, SPELL_NAMES, SPELL_DESCRIPTIONS } from '@/config/contracts'
 
 interface RevealFormProps {
@@ -19,7 +19,7 @@ export function RevealForm({ roundId, spellId, spellParam, onRevealSuccess }: Re
   const [autoLoaded, setAutoLoaded] = useState(false)
   
   const { address, isConnected } = useAccount()
-  const chainId = baseSepolia.id
+  const chainId = base.id
   const contracts = CONTRACTS[chainId]
 
   // Try to load saved commit data

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useWatchContractEvent } from 'wagmi'
-import { baseSepolia } from 'viem/chains'
+import { base } from 'viem/chains'
 import { CONTRACTS, SPELLBLOCK_CORE_ABI } from '@/config/contracts'
 import { formatUnits } from 'viem'
 
@@ -16,7 +16,7 @@ interface CommitActivity {
 
 export function ActivityFeed({ roundId }: { roundId?: bigint }) {
   const [activities, setActivities] = useState<CommitActivity[]>([])
-  const contracts = CONTRACTS[baseSepolia.id]
+  const contracts = CONTRACTS[base.id]
 
   // Watch for new commits
   useWatchContractEvent({
@@ -24,7 +24,7 @@ export function ActivityFeed({ roundId }: { roundId?: bigint }) {
     abi: SPELLBLOCK_CORE_ABI,
     eventName: 'PlayerCommitted',
     args: roundId ? { roundId } : undefined,
-    chainId: baseSepolia.id,
+    chainId: base.id,
     onLogs: (logs) => {
       const newActivities = logs.map(log => ({
         player: log.args.player!,

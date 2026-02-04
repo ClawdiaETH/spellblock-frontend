@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useAccount, useWriteContract, useReadContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseUnits, formatUnits, keccak256, encodePacked, toHex } from 'viem'
-import { baseSepolia } from 'viem/chains'
+import { base } from 'viem/chains'
 import { CONTRACTS, SPELLBLOCK_ABI, ERC20_ABI } from '@/config/contracts'
 import { useDictionary } from '@/hooks/useDictionary'
 
@@ -22,7 +22,7 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
   const [step, setStep] = useState<'approve' | 'commit'>('approve')
   
   const { address, isConnected } = useAccount()
-  const chainId = baseSepolia.id
+  const chainId = base.id
   const contracts = CONTRACTS[chainId]
   const { validateWord: validateDictionaryWord, isLoading: isDictionaryLoading, error: dictionaryError } = useDictionary()
 
