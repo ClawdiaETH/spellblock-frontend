@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import dynamic from 'next/dynamic'
+import { Analytics } from '@vercel/analytics/next'
 
 const Providers = dynamic(() => import('@/components/Providers').then(mod => mod.Providers), {
   ssr: false,
@@ -29,6 +30,7 @@ export default function RootLayout({
         <Providers>
           {children}
         </Providers>
+        <Analytics />
       </body>
     </html>
   )
