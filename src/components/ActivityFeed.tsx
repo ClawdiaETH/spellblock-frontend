@@ -24,9 +24,10 @@ export function ActivityFeed({ roundId }: { roundId?: bigint }) {
 
     const fetchPastEvents = async () => {
       try {
-        // Get current block and search last 50000 blocks (about 24 hours on Base)
+        // Get current block and search last 9000 blocks (~5 hours on Base)
+        // Note: 1rpc limits getLogs to 10000 blocks max
         const currentBlock = await publicClient.getBlockNumber()
-        const fromBlock = currentBlock > 50000n ? currentBlock - 50000n : 0n
+        const fromBlock = currentBlock > 9000n ? currentBlock - 9000n : 0n
         
         console.log(`Fetching CommitSubmitted events from block ${fromBlock} for roundId ${roundId}`)
         
