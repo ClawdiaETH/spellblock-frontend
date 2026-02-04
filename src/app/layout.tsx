@@ -16,22 +16,6 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: 'SpellBlock | Commit-Reveal Word Game',
   description: 'A strategic word game on Base. Commit your word, reveal when the spell drops, win $CLAWDIA!',
-  other: {
-    'fc:miniapp': JSON.stringify({
-      version: "1",
-      imageUrl: "https://spellblock.vercel.app/og-image.png",
-      button: {
-        title: "Play Now",
-        action: {
-          type: "launch_frame",
-          name: "SpellBlock",
-          url: "https://spellblock.vercel.app/",
-          splashImageUrl: "https://spellblock.vercel.app/splash.png",
-          splashBackgroundColor: "#f5f0ec"
-        }
-      }
-    })
-  }
 }
 
 export default function RootLayout({
@@ -41,6 +25,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <meta
+          name="fc:miniapp"
+          content={JSON.stringify({
+            version: "1",
+            imageUrl: "https://spellblock.vercel.app/og-image.svg",
+            button: {
+              title: "Play Now",
+              action: {
+                type: "launch_frame",
+                name: "SpellBlock",
+                url: "https://spellblock.vercel.app/",
+                splashImageUrl: "https://spellblock.vercel.app/splash.svg",
+                splashBackgroundColor: "#f5f0ec"
+              }
+            }
+          })}
+        />
+      </head>
       <body className={`${plusJakartaSans.variable} font-main bg-void-deep text-text-primary`}>
         <Providers>
           {children}
