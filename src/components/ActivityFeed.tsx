@@ -10,8 +10,7 @@ interface CommitActivity {
   player: string
   stake: bigint
   timestamp: number
-  totalPot: bigint
-  commitCount: number
+  streak: number
 }
 
 export function ActivityFeed({ roundId }: { roundId?: bigint }) {
@@ -27,7 +26,7 @@ export function ActivityFeed({ roundId }: { roundId?: bigint }) {
       try {
         const logs = await publicClient.getLogs({
           address: contracts.spellBlockCore,
-          event: parseAbiItem('event PlayerCommitted(uint256 indexed roundId, address indexed player, uint256 stake, uint256 newTotalPot, uint256 newCommitCount)'),
+          event: parseAbiItem('event CommitSubmitted(uint256 indexed roundId, address indexed player, uint256 stake, uint256 timestamp, uint256 streak)'),
           args: { roundId },
           fromBlock: 'earliest',
           toBlock: 'latest',
@@ -36,9 +35,8 @@ export function ActivityFeed({ roundId }: { roundId?: bigint }) {
         const pastActivities = logs.map(log => ({
           player: log.args.player as string,
           stake: log.args.stake as bigint,
-          timestamp: Date.now(),
-          totalPot: log.args.newTotalPot as bigint,
-          commitCount: Number(log.args.newCommitCount),
+          timestamp: Number(log.args.timestamp),
+          streak: Number(log.args.streak),
         }))
 
         setActivities(pastActivities.reverse().slice(0, 10))
@@ -54,16 +52,15 @@ export function ActivityFeed({ roundId }: { roundId?: bigint }) {
   useWatchContractEvent({
     address: contracts.spellBlockCore,
     abi: SPELLBLOCK_CORE_ABI,
-    eventName: 'PlayerCommitted',
+    eventName: 'CommitSubmitted',
     args: roundId ? { roundId } : undefined,
     chainId: base.id,
     onLogs: (logs) => {
       const newActivities = logs.map(log => ({
         player: log.args.player!,
         stake: log.args.stake!,
-        timestamp: Date.now(),
-        totalPot: log.args.newTotalPot!,
-        commitCount: Number(log.args.newCommitCount!),
+        timestamp: Number(log.args.timestamp!),
+        streak: Number(log.args.streak!),
       }))
       setActivities(prev => [...newActivities, ...prev].slice(0, 10))
     }
@@ -107,9 +104,11 @@ export function ActivityFeed({ roundId }: { roundId?: bigint }) {
                 <div className="text-amber-bright font-bold">
                   {formatStake(activity.stake)} $CLAWDIA
                 </div>
-                <div className="text-xs text-text-dim">
-                  #{activity.commitCount} commit
-                </div>
+                {activity.streak > 0 && (
+                  <div className="text-xs text-text-dim">
+                    🔥 {activity.streak} streak
+                  </div>
+                )}
               </div>
             </div>
           ))
