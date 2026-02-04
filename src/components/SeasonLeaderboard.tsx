@@ -11,13 +11,13 @@ interface LeaderboardEntry {
   totalWinnings: bigint
 }
 
-// Mock data for now
+// Mock data - winnings in wei (18 decimals), amounts reflect 1M min stake economy
 const mockLeaderboard: LeaderboardEntry[] = [
-  { rank: 1, player: '0x1234...5678', totalScore: 1250, roundsWon: 8, totalWinnings: BigInt('45000000000000000000000') },
-  { rank: 2, player: '0x2345...6789', totalScore: 1100, roundsWon: 6, totalWinnings: BigInt('32000000000000000000000') },
-  { rank: 3, player: '0x3456...789a', totalScore: 980, roundsWon: 5, totalWinnings: BigInt('28000000000000000000000') },
-  { rank: 4, player: '0x4567...89ab', totalScore: 850, roundsWon: 4, totalWinnings: BigInt('19000000000000000000000') },
-  { rank: 5, player: '0x5678...9abc', totalScore: 720, roundsWon: 3, totalWinnings: BigInt('15000000000000000000000') },
+  { rank: 1, player: '0x1234...5678', totalScore: 1250, roundsWon: 8, totalWinnings: BigInt('45000000000000000000000000') }, // 45M
+  { rank: 2, player: '0x2345...6789', totalScore: 1100, roundsWon: 6, totalWinnings: BigInt('32000000000000000000000000') }, // 32M
+  { rank: 3, player: '0x3456...789a', totalScore: 980, roundsWon: 5, totalWinnings: BigInt('28000000000000000000000000') },  // 28M
+  { rank: 4, player: '0x4567...89ab', totalScore: 850, roundsWon: 4, totalWinnings: BigInt('19000000000000000000000000') },  // 19M
+  { rank: 5, player: '0x5678...9abc', totalScore: 720, roundsWon: 3, totalWinnings: BigInt('15000000000000000000000000') },  // 15M
 ]
 
 export function SeasonLeaderboard() {
@@ -26,11 +26,17 @@ export function SeasonLeaderboard() {
   const truncateAddress = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`
 
   const formatWinnings = (amount: bigint) => {
-    const formatted = parseFloat((Number(amount) / 1e18).toFixed(0))
-    if (formatted >= 1000) {
-      return `${(formatted / 1000).toFixed(1)}K`
+    const tokens = Number(amount) / 1e18
+    if (tokens >= 1_000_000_000) {
+      return `${(tokens / 1_000_000_000).toFixed(1)}B`
     }
-    return formatted.toString()
+    if (tokens >= 1_000_000) {
+      return `${(tokens / 1_000_000).toFixed(1)}M`
+    }
+    if (tokens >= 1_000) {
+      return `${(tokens / 1_000).toFixed(1)}K`
+    }
+    return tokens.toFixed(0)
   }
 
   const getRankEmoji = (rank: number) => {
@@ -49,7 +55,7 @@ export function SeasonLeaderboard() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <span className="text-lg">🏆</span>
-          <h3 className="font-heading font-bold text-amber-bright">Season 1 Leaders</h3>
+          <h3 className="font-heading font-bold text-amber-bright">Season 1 leaders</h3>
         </div>
         <div className="text-xs text-text-dim">
           Day 8/14
