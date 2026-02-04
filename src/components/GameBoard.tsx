@@ -83,6 +83,8 @@ export function GameBoard() {
     commitDeadline: round[2] as bigint,
     revealDeadline: round[3] as bigint,
     letterPool: round[4] as `0x${string}`,
+    spellId: Number(round[5] || 0),              // [5]=spellId
+    spellParam: (round[6] as `0x${string}`) || '0x00', // [6]=spellParam (bytes1)
     totalPot: BigInt(String(round[10] || 0)),    // Fixed: was 11
     jackpotBonus: BigInt(String(round[11] || 0)), // Fixed: was 15
     commitCount: BigInt(String(round[12] || 0)),
@@ -107,10 +109,13 @@ export function GameBoard() {
     Buffer.from(roundData.letterPool.slice(2, 18), 'hex').toString('utf-8').replace(/\0/g, '') : 
     ''
 
-  // Check if spell and ruler are revealed (after commit phase) - simplified for now
-  const isSpellRevealed = false // TODO: check revealedSeed once we have proper struct parsing
-  const spellName = null
-  const spellDescription = null
+  // Spell is revealed after commit phase ends (during Reveal and Finalized phases)
+  const isSpellRevealed = phase === RoundPhase.Reveal || phase === RoundPhase.Finalized
+  const spellId = roundData?.spellId ?? 0
+  const spellParam = roundData?.spellParam ?? '0x00'
+  const spellLetter = spellParam ? String.fromCharCode(parseInt(spellParam.slice(2, 4), 16) || 65) : '?'
+  const spellName = SPELL_NAMES[spellId] || 'Unknown'
+  const spellDescription = (SPELL_DESCRIPTIONS[spellId] || 'Unknown effect').replace('[letter]', spellLetter)
 
   // Has user committed?
   const hasCommitted = commitment && commitment.commitHash !== '0x0000000000000000000000000000000000000000000000000000000000000000'
@@ -302,8 +307,8 @@ export function GameBoard() {
               {hasCommitted && !hasRevealed && currentRoundId ? (
                 <RevealForm
                   roundId={currentRoundId}
-                  spellId={0}
-                  spellParam={"0x0"}
+                  spellId={spellId}
+                  spellParam={spellParam}
                   onRevealSuccess={() => {
                     refetchCommitment()
                     refetchRound()
