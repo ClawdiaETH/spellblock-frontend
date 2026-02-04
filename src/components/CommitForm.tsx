@@ -5,6 +5,7 @@ import { useAccount, useWriteContract, useReadContract, useWaitForTransactionRec
 import { parseUnits, formatUnits, keccak256, encodePacked, toHex } from 'viem'
 import { baseSepolia } from 'viem/chains'
 import { CONTRACTS, SPELLBLOCK_ABI, ERC20_ABI } from '@/config/contracts'
+import { useDictionary } from '@/hooks/useDictionary'
 
 interface CommitFormProps {
   roundId: bigint
@@ -23,6 +24,7 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
   const { address, isConnected } = useAccount()
   const chainId = baseSepolia.id
   const contracts = CONTRACTS[chainId]
+  const { validateWord: validateDictionaryWord, isLoading: isDictionaryLoading, error: dictionaryError } = useDictionary()
 
   // Generate random salt on mount
   useEffect(() => {
@@ -88,30 +90,17 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
     }
   }, [commitSuccess, roundId, word, salt, stake, address, onCommitSuccess])
 
-  const validateWord = (w: string) => {
-    const availableLetters = new Set(letterPool.toLowerCase().split(''))
-    const wordLower = w.toLowerCase()
-    
-    // Check word uses only letters from the pool (can reuse letters)
-    for (const l of wordLower) {
-      if (!availableLetters.has(l)) {
-        return `Letter '${l}' is not in today's pool`
-      }
-    }
-    
-    return null
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
-    if (!word || word.length < 3) {
-      setError('Word must be at least 3 letters')
+    if (!word) {
+      setError('Please enter a word')
       return
     }
 
-    const wordError = validateWord(word)
+    // Use dictionary validation which includes all checks
+    const wordError = validateDictionaryWord(word, letterPool)
     if (wordError) {
       setError(wordError)
       return
@@ -194,16 +183,26 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
         )}
       </div>
 
+      {dictionaryError && (
+        <p className="text-red-400 text-sm">Dictionary error: {dictionaryError}</p>
+      )}
+
       {error && (
         <p className="text-red-400 text-sm">{error}</p>
       )}
 
+      {isDictionaryLoading && (
+        <p className="text-yellow-400 text-sm">📚 Loading dictionary...</p>
+      )}
+
       <button
         type="submit"
-        disabled={isApproving || isCommitting}
+        disabled={isApproving || isCommitting || isDictionaryLoading || !!dictionaryError}
         className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 py-3 rounded-lg font-bold transition-all"
       >
-        {isApproving || isCommitting ? (
+        {isDictionaryLoading ? (
+          'Loading dictionary...'
+        ) : isApproving || isCommitting ? (
           'Processing...'
         ) : step === 'approve' ? (
           'Approve $CLAWDIA'
