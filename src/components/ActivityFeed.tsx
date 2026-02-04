@@ -24,19 +24,26 @@ export function ActivityFeed({ roundId }: { roundId?: bigint }) {
 
     const fetchPastEvents = async () => {
       try {
-        // Get current block and search last 10000 blocks (about 5 hours on Base)
+        // Get current block and search last 50000 blocks (about 24 hours on Base)
         const currentBlock = await publicClient.getBlockNumber()
-        const fromBlock = currentBlock > 10000n ? currentBlock - 10000n : 0n
+        const fromBlock = currentBlock > 50000n ? currentBlock - 50000n : 0n
+        
+        console.log(`Fetching CommitSubmitted events from block ${fromBlock} for roundId ${roundId}`)
         
         const logs = await publicClient.getLogs({
           address: contracts.spellBlockCore,
           event: parseAbiItem('event CommitSubmitted(uint256 indexed roundId, address indexed player, uint256 stake, uint256 timestamp, uint256 streak)'),
-          args: { roundId },
           fromBlock,
           toBlock: 'latest',
         })
 
-        const pastActivities = logs.map(log => ({
+        console.log(`Found ${logs.length} total CommitSubmitted events`)
+        
+        // Filter for current round client-side
+        const roundLogs = logs.filter(log => log.args.roundId === roundId)
+        console.log(`Found ${roundLogs.length} events for round ${roundId}`)
+
+        const pastActivities = roundLogs.map(log => ({
           player: log.args.player as string,
           stake: log.args.stake as bigint,
           timestamp: Number(log.args.timestamp),
@@ -57,10 +64,13 @@ export function ActivityFeed({ roundId }: { roundId?: bigint }) {
     address: contracts.spellBlockCore,
     abi: SPELLBLOCK_CORE_ABI,
     eventName: 'CommitSubmitted',
-    args: roundId ? { roundId } : undefined,
     chainId: base.id,
     onLogs: (logs) => {
-      const newActivities = logs.map(log => ({
+      // Filter for current round
+      const roundLogs = roundId ? logs.filter(log => log.args.roundId === roundId) : logs
+      if (roundLogs.length === 0) return
+      
+      const newActivities = roundLogs.map(log => ({
         player: log.args.player!,
         stake: log.args.stake!,
         timestamp: Number(log.args.timestamp!),
