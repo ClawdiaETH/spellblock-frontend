@@ -400,17 +400,20 @@ export default function Home() {
             <h4 className="text-xl font-heading font-bold text-center mb-4 text-violet-bright">
               📊 Quick scoring guide
             </h4>
+            <p className="text-center text-text-secondary text-sm mb-4">
+              Words must be <strong className="text-amber-glow">4-12 letters</strong> (minimum 4 to submit)
+            </p>
             <div className="grid md:grid-cols-4 gap-4 text-center text-sm">
               <div>
-                <div className="font-mono text-amber-glow mb-1">"CAT" = 3 pts</div>
-                <div className="text-text-dim">1 point per letter</div>
+                <div className="font-mono text-amber-glow mb-1">"ROAD" = 4 pts</div>
+                <div className="text-text-dim">Minimum length</div>
               </div>
               <div>
                 <div className="font-mono text-amber-glow mb-1">"STORM" = 5 pts</div>
-                <div className="text-text-dim">5 letters × 1pt each</div>
+                <div className="text-text-dim">1 point per letter</div>
               </div>
               <div>
-                <div className="font-mono text-amber-glow mb-1">"TABLOID" = 7 pts</div>
+                <div className="font-mono text-amber-glow mb-1">"ASTEROID" = 8 pts</div>
                 <div className="text-text-dim">Longer words win</div>
               </div>
               <div>
@@ -448,7 +451,7 @@ export default function Home() {
             
             <p className="text-text-dim text-sm">
               Connect your wallet above to join the next round. No $CLAWDIA? 
-              <a href="#" className="text-violet-glow hover:text-violet-bright ml-1">Get some here →</a>
+              <a href="https://swap.defillama.com/?chain=base&from=0x0000000000000000000000000000000000000000&tab=swap&to=0xbbd9aDe16525acb4B336b6dAd3b9762901522B07" target="_blank" rel="noopener noreferrer" className="text-violet-glow hover:text-violet-bright ml-1">Get some here →</a>
             </p>
           </div>
         </section>
