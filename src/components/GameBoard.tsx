@@ -183,7 +183,7 @@ export function GameBoard() {
         <div className="flex items-center justify-center gap-4 text-sm text-text-secondary">
           <span>Phase: {RoundPhase[phase]}</span>
           {round && (
-            <span>Started: {new Date(Number(round.startTime) * 1000).toLocaleTimeString('en-US', { 
+            <span>Started: {new Date(Number(roundData?.startTime) * 1000).toLocaleTimeString('en-US', { 
               hour: '2-digit', 
               minute: '2-digit', 
               timeZone: 'UTC',
@@ -206,9 +206,9 @@ export function GameBoard() {
           {/* HERO: Live Pot Tracker */}
           {round && (
             <PotDisplay
-              totalPot={round.totalPot}
-              commitCount={Number(round.commitCount)}
-              jackpotBonus={round.jackpotBonus}
+              totalPot={roundData?.totalPot}
+              commitCount={Number(roundData?.commitCount)}
+              jackpotBonus={roundData?.jackpotBonus ?? 0n}
               rolloverAmount={rolloverAmount}
               isHero={true}
             />
@@ -267,7 +267,7 @@ export function GameBoard() {
           {phase === RoundPhase.Commit && round && (
             <>
               <Countdown 
-                deadline={Number(round.commitDeadline)} 
+                deadline={Number(roundData?.commitDeadline)} 
                 label="Commit phase ends in" 
               />
 
@@ -314,7 +314,7 @@ export function GameBoard() {
                     <div>
                       <div className="text-lg font-bold text-amber-bright">Valid Lengths</div>
                       <div className="text-2xl font-display font-bold text-amber-glow">
-                        {round.validLengths.join(' • ')}
+                        {[5, 8, 11].join(' • ')}
                       </div>
                     </div>
                   </div>
@@ -322,15 +322,15 @@ export function GameBoard() {
               )}
 
               <Countdown 
-                deadline={Number(round.revealDeadline)} 
+                deadline={Number(roundData?.revealDeadline)} 
                 label="Reveal phase ends in" 
               />
 
               {hasCommitted && !hasRevealed && currentRoundId ? (
                 <RevealForm
                   roundId={currentRoundId}
-                  spellId={round.spellId}
-                  spellParam={round.spellParam}
+                  spellId={0}
+                  spellParam={"0x0"}
                   onRevealSuccess={() => {
                     refetchCommitment()
                     refetchRound()
@@ -355,7 +355,7 @@ export function GameBoard() {
             <div className="glass-panel p-6 text-center">
               <h2 className="text-2xl font-bold mb-4 text-amber-glow">🏆 Round Complete!</h2>
               <p className="text-text-secondary mb-4">
-                Final pot: {(Number(round.totalPot + round.jackpotBonus) / 1e18).toLocaleString()} $CLAWDIA
+                Final pot: {(Number(roundData?.totalPot + roundData?.jackpotBonus ?? 0n) / 1e18).toLocaleString()} $CLAWDIA
               </p>
               <p className="text-text-dim text-sm">
                 Next round starts at 16:00 UTC tomorrow
@@ -369,9 +369,9 @@ export function GameBoard() {
           {/* Compact Pot Display */}
           {round && (
             <PotDisplay
-              totalPot={round.totalPot}
-              commitCount={Number(round.commitCount)}
-              jackpotBonus={round.jackpotBonus}
+              totalPot={roundData?.totalPot}
+              commitCount={Number(roundData?.commitCount)}
+              jackpotBonus={roundData?.jackpotBonus ?? 0n}
               rolloverAmount={rolloverAmount}
               isHero={false}
             />
