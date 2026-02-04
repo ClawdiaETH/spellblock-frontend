@@ -357,7 +357,7 @@ export function GameBoard() {
             <div className="glass-panel p-6 text-center">
               <h2 className="text-2xl font-bold mb-4 text-amber-glow">🏆 Round Complete!</h2>
               <p className="text-text-secondary mb-4">
-                Final pot: {(Number(roundData?.totalPot + roundData?.jackpotBonus ?? 0n) / 1e18).toLocaleString()} $CLAWDIA
+                Final pot: {(Number((roundData?.totalPot ?? 0n) + (roundData?.jackpotBonus ?? 0n)) / 1e18).toLocaleString()} $CLAWDIA
               </p>
               <p className="text-text-dim text-sm">
                 Next round starts at 16:00 UTC tomorrow
