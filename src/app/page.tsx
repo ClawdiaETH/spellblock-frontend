@@ -1,7 +1,15 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
+import dynamicImport from 'next/dynamic'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { GameBoard } from '@/components/GameBoard'
+
+// Dynamically import GameBoard to avoid SSR issues
+const GameBoard = dynamicImport(() => import('@/components/GameBoard').then(mod => mod.GameBoard), {
+  ssr: false,
+  loading: () => <div className="animate-pulse bg-spell-dark/50 rounded-xl h-96" />
+})
 
 export default function Home() {
   // Generate floating particles
