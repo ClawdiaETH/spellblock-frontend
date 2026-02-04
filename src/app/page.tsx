@@ -13,6 +13,11 @@ const GameBoard = dynamicImport(() => import('@/components/GameBoard').then(mod 
   loading: () => <div className="animate-pulse bg-spell-dark/50 rounded-xl h-96" />
 })
 
+const ConnectPlayButton = dynamicImport(() => import('@/components/ConnectPlayButton').then(mod => mod.ConnectPlayButton), {
+  ssr: false,
+  loading: () => <button className="arcane-button text-xl px-8 py-4 mb-4 opacity-50">Connect wallet & play now</button>
+})
+
 export default function Home() {
   // Generate floating particles
   const particles = Array.from({ length: 12 }, (_, i) => (
@@ -445,9 +450,7 @@ export default function Home() {
               </div>
             </div>
 
-            <button className="arcane-button text-xl px-8 py-4 mb-4">
-              Connect wallet & play now
-            </button>
+            <ConnectPlayButton />
             
             <p className="text-text-dim text-sm">
               Connect your wallet above to join the next round. No $CLAWDIA? 
