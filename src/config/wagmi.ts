@@ -5,14 +5,14 @@ import { defineChain } from 'viem'
 // Using a demo ID for development - should be replaced for production
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '3a8170812b534d0ff9d794f19a901d64'
 
-// Define Base with reliable RPC (llamarpc is more stable than coinbase's public endpoint)
+// Define Base with reliable RPC (1rpc is more stable than coinbase's public endpoint)
 const base = defineChain({
   id: 8453,
   name: 'Base',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['https://base.llamarpc.com'],
+      http: ['https://1rpc.io/base'],
     },
   },
   blockExplorers: {
