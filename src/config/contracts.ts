@@ -12,12 +12,12 @@ export const CONTRACTS = {
     seasonAccumulator: '0x0000000000000000000000000000000000000000' as const, // TBD
   },
   [baseSepolia.id]: {
-    spellBlockCore: '0x86a495D7FFfDDdf6B0952fd4F57Bc1c39dbDC6E5' as const,
-    spellBlockGame: '0x86a495D7FFfDDdf6B0952fd4F57Bc1c39dbDC6E5' as const, // Alias for spellBlockCore
-    spellBlockTreasury: '0x6EAa40539FeC3255cB45382145376E022287222d' as const,
-    spellBlockScoring: '0x339bBe3a05e91CFA00104623ee8B7c0f2210C865' as const, // SpellEngine
-    clawdiaToken: '0xC9be6f5E9CCC0e4C591d4bafa4c068AfACC39F32' as const, // MockCLAWDIA
-    dictionaryVerifier: '0xF8133a7A530679435D460b00B152b0ef7Bee8337' as const,
+    spellBlockCore: '0xaB9bae309759f8589E9772b21cD25E1dC869137B' as const, // v3 redeployed 2026-02-03
+    spellBlockGame: '0xaB9bae309759f8589E9772b21cD25E1dC869137B' as const, // Alias for spellBlockCore
+    spellBlockTreasury: '0x0000000000000000000000000000000000000000' as const, // Embedded in game
+    spellBlockScoring: '0x38ad55d120784314802269c4dE0012Cb777A9AC2' as const, // SpellRegistry
+    clawdiaToken: '0xb6669B1258cb0efbFA4D9321D5EC7Caf5d6C19c3' as const, // MockCLAWDIA v3
+    dictionaryVerifier: '0x0000000000000000000000000000000000000000' as const, // Embedded in game
     streakTracker: '0x0000000000000000000000000000000000000000' as const, // Embedded in game
     seasonAccumulator: '0x0000000000000000000000000000000000000000' as const, // TBD
   }
