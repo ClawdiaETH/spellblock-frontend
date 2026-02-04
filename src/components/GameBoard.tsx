@@ -186,7 +186,6 @@ export function GameBoard() {
         <div className="lg:col-span-1 space-y-6">
           <BurnCounter />
           <SeasonLeaderboard />
-          {roundData && <ActivityFeed roundId={currentRoundId} />}
         </div>
 
         {/* Main Game Area */}
@@ -353,6 +352,9 @@ export function GameBoard() {
               isHero={false}
             />
           )}
+
+          {/* Live Activity */}
+          {roundData && <ActivityFeed roundId={currentRoundId} />}
           
           {/* Player's streak info */}
           {address && (

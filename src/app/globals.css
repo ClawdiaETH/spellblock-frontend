@@ -337,3 +337,13 @@ body {
   background: linear-gradient(145deg, #4a3a6a, #3a2a5a);
   border-color: #9382ff;
 }
+
+/* Countdown Timer */
+.countdown-digit {
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: #fff;
+  min-width: 3rem;
+  text-align: center;
+}
