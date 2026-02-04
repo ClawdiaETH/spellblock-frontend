@@ -2,6 +2,7 @@
 
 import dynamicImport from 'next/dynamic'
 import { useFarcasterMiniApp } from '@/contexts/FarcasterMiniAppContext'
+import { useFarcasterAutoConnect } from '@/hooks/useFarcasterAutoConnect'
 import { useEffect } from 'react'
 
 // Dynamically import components that need wagmi context
@@ -21,19 +22,10 @@ const ConnectPlayButton = dynamicImport(() => import('@/components/ConnectPlayBu
 })
 
 export default function Home() {
-  const { isInMiniApp, initializeApp, isReady } = useFarcasterMiniApp()
-
-  // Initialize mini app after components load
-  useEffect(() => {
-    if (isInMiniApp && !isReady) {
-      // Wait a bit for game data to load, then initialize
-      const timer = setTimeout(() => {
-        initializeApp()
-      }, 2000) // 2 second delay to ensure game board loads
-      
-      return () => clearTimeout(timer)
-    }
-  }, [isInMiniApp, isReady, initializeApp])
+  const { isInMiniApp } = useFarcasterMiniApp()
+  
+  // Auto-connect wallet in mini app environment
+  useFarcasterAutoConnect()
 
   // Generate floating particles
   const particles = Array.from({ length: 12 }, (_, i) => (
