@@ -155,12 +155,22 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
       <h3 className="text-xl font-bold text-center mb-4">Submit your word</h3>
       
       <div>
-        <label className="block text-sm text-gray-400 mb-1">Your word</label>
+        <div className="flex justify-between items-center mb-1">
+          <label className="text-sm text-gray-400">Your word (4-12 letters)</label>
+          <span className={`text-sm font-mono ${
+            word.length === 0 ? 'text-gray-500' : 
+            word.length < 4 || word.length > 12 ? 'text-red-400' : 
+            'text-green-400'
+          }`}>
+            {word.length}/12
+          </span>
+        </div>
         <input
           type="text"
           value={word}
           onChange={(e) => setWord(e.target.value.toLowerCase())}
           placeholder="Enter your word..."
+          maxLength={12}
           className="w-full bg-spell-darker border border-indigo-800 rounded-lg px-4 py-3 text-lg font-mono uppercase tracking-wider focus:outline-none focus:border-indigo-500"
         />
       </div>
