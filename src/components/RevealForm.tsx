@@ -24,29 +24,31 @@ export function RevealForm({ roundId, spellId, spellParam, onRevealSuccess }: Re
 
   // Try to load saved commit data
   useEffect(() => {
-    const saved = localStorage.getItem(`spellblock-commit-${roundId}`)
-    if (saved) {
-      try {
-        const data = JSON.parse(saved)
-        setWord(data.word)
-        setSalt(data.salt)
-        setAutoLoaded(true)
-      } catch (e) {
-        console.error('Failed to load saved commit', e)
+    if (address) {
+      const saved = localStorage.getItem(`spellblock-commit-${roundId}-${address}`)
+      if (saved) {
+        try {
+          const data = JSON.parse(saved)
+          setWord(data.word)
+          setSalt(data.salt)
+          setAutoLoaded(true)
+        } catch (e) {
+          console.error('Failed to load saved commit', e)
+        }
       }
     }
-  }, [roundId])
+  }, [roundId, address])
 
   const { writeContract: reveal, data: revealHash, isPending: isRevealing } = useWriteContract()
   const { isSuccess: revealSuccess } = useWaitForTransactionReceipt({ hash: revealHash })
 
   useEffect(() => {
-    if (revealSuccess) {
+    if (revealSuccess && address) {
       // Clear saved commit data
-      localStorage.removeItem(`spellblock-commit-${roundId}`)
+      localStorage.removeItem(`spellblock-commit-${roundId}-${address}`)
       onRevealSuccess?.()
     }
-  }, [revealSuccess, roundId, onRevealSuccess])
+  }, [revealSuccess, roundId, address, onRevealSuccess])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

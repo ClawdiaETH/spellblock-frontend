@@ -75,7 +75,7 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
 
   // Handle commit success
   useEffect(() => {
-    if (commitSuccess) {
+    if (commitSuccess && address) {
       // Save commitment data to localStorage for reveal
       const commitData = {
         roundId: roundId.toString(),
@@ -83,10 +83,10 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
         salt,
         stake,
       }
-      localStorage.setItem(`spellblock-commit-${roundId}`, JSON.stringify(commitData))
+      localStorage.setItem(`spellblock-commit-${roundId}-${address}`, JSON.stringify(commitData))
       onCommitSuccess?.()
     }
-  }, [commitSuccess, roundId, word, salt, stake, onCommitSuccess])
+  }, [commitSuccess, roundId, word, salt, stake, address, onCommitSuccess])
 
   const validateWord = (w: string) => {
     const availableLetters = new Set(letterPool.toLowerCase().split(''))
