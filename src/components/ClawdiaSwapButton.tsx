@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { sdk } from '@farcaster/miniapp-sdk'
 import { useFarcasterMiniApp } from '@/contexts/FarcasterMiniAppContext'
 
 interface ClawdiaSwapButtonProps {
@@ -19,6 +18,9 @@ export function ClawdiaSwapButton({ className = '' }: ClawdiaSwapButtonProps) {
     setIsSwapping(true)
     
     try {
+      // Dynamically import SDK to avoid SSR issues
+      const { sdk } = await import('@farcaster/miniapp-sdk')
+      
       const result = await sdk.actions.swapToken({
         // Sell token: USDC on Base (CAIP-19 format)
         sellToken: 'eip155:8453/erc20:0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',

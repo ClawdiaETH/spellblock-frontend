@@ -3,39 +3,36 @@
 import { WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
-import { webConfig, miniAppConfig } from '@/config/wagmi'
+import { webConfig, getMiniAppConfig, isInMiniApp } from '@/config/wagmi'
 import { FarcasterMiniAppProvider } from '@/contexts/FarcasterMiniAppContext'
-import { useState, useEffect, type ReactNode } from 'react'
+import { useState, useEffect, useMemo, type ReactNode } from 'react'
 import '@rainbow-me/rainbowkit/styles.css'
 
 export function Providers({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false)
-  const [isInMiniApp, setIsInMiniApp] = useState(false)
+  const [inMiniApp, setInMiniApp] = useState(false)
   const [queryClient] = useState(() => new QueryClient())
 
   useEffect(() => {
     setMounted(true)
-    
-    // Detect mini app environment
-    try {
-      const inMiniApp = window.parent !== window
-      setIsInMiniApp(inMiniApp)
-    } catch {
-      setIsInMiniApp(false)
-    }
+    setInMiniApp(isInMiniApp())
   }, [])
+
+  // Get the appropriate config after mount
+  const config = useMemo(() => {
+    if (!mounted) return webConfig
+    return inMiniApp ? getMiniAppConfig() : webConfig
+  }, [mounted, inMiniApp])
 
   // Show children without wallet providers during SSR/initial render
   if (!mounted) {
     return <>{children}</>
   }
 
-  const config = isInMiniApp ? miniAppConfig : webConfig
-
-  const AppContent = () => (
+  return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        {isInMiniApp ? (
+        {inMiniApp ? (
           // Mini app environment - no RainbowKit UI
           <FarcasterMiniAppProvider>
             {children}
@@ -57,6 +54,4 @@ export function Providers({ children }: { children: ReactNode }) {
       </QueryClientProvider>
     </WagmiProvider>
   )
-
-  return <AppContent />
 }

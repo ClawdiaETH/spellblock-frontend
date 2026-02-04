@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { sdk } from '@farcaster/miniapp-sdk'
 import { useFarcasterMiniApp } from '@/contexts/FarcasterMiniAppContext'
 
 interface ShareResultButtonProps {
@@ -27,6 +26,9 @@ export function ShareResultButton({
     setIsSharing(true)
     
     try {
+      // Dynamically import SDK to avoid SSR issues
+      const { sdk } = await import('@farcaster/miniapp-sdk')
+      
       // Create engaging share text
       const shareText = word 
         ? `🎯 I scored ${score} points with "${word.toUpperCase()}" in SpellBlock Round ${roundNumber}!\n\nCan you beat my word? Play now!`

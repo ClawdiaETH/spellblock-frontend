@@ -1,7 +1,6 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { sdk } from '@farcaster/miniapp-sdk'
 
 // Define User type based on SDK context (matches UserContext from SDK)
 interface User {
@@ -37,8 +36,12 @@ export function FarcasterMiniAppProvider({
 
   const initializeApp = async () => {
     if (isReady) return
+    if (typeof window === 'undefined') return
 
     try {
+      // Dynamically import SDK only on client
+      const { sdk } = await import('@farcaster/miniapp-sdk')
+      
       // Get user context - need to await it since it might be async
       const context = await sdk.context
       const currentUser = context?.user || null
@@ -63,9 +66,12 @@ export function FarcasterMiniAppProvider({
   }
 
   useEffect(() => {
+    // Skip on server
+    if (typeof window === 'undefined') return
+    
     // Check if we're running in a mini app
     try {
-      const inMiniApp = Boolean(typeof window !== 'undefined' && (window as any).parent !== window)
+      const inMiniApp = window.parent !== window
       setIsInMiniApp(inMiniApp)
       
       if (inMiniApp) {
