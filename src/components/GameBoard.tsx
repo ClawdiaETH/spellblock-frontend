@@ -101,9 +101,23 @@ export function GameBoard() {
   // Min stake for v3 spec (1M $CLAWDIA)
   const minStake = BigInt('1000000000000000000000000') // 1,000,000 $CLAWDIA
 
+  // Debug info
+  const debugInfo = {
+    currentRoundId: currentRoundId?.toString(),
+    hasRound: !!round,
+    startTime: round?.startTime?.toString(),
+    commitDeadline: round?.commitDeadline?.toString(),
+    currentTime,
+    computedPhase: phase,
+  }
+
   if (!currentRoundId || currentRoundId === 0n || phase === RoundPhase.Inactive) {
     return (
       <div className="max-w-7xl mx-auto p-4">
+        {/* Debug panel - remove for production */}
+        <div className="mb-4 p-4 bg-red-900/50 rounded text-xs font-mono text-white">
+          <div>Debug: {JSON.stringify(debugInfo, null, 2)}</div>
+        </div>
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Main waiting area */}
           <div className="lg:col-span-2">
