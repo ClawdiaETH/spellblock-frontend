@@ -90,6 +90,64 @@ export default function Home() {
           </div>
         </section>
 
+        {/* THE CORE MECHANIC - Two Hidden Constraints */}
+        <section className="max-w-4xl mx-auto px-4 py-12 mb-8">
+          <div className="glass-panel p-8 border-2 border-amber-glow/30">
+            <h3 className="text-3xl font-display font-bold text-center mb-6 text-amber-glow">
+              ⚠️ The Challenge: Two Hidden Constraints
+            </h3>
+            <p className="text-center text-lg text-text-secondary mb-8">
+              Every round, your word must survive <strong className="text-violet-bright">BOTH</strong> hidden constraints to win the main prize:
+            </p>
+            
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              {/* Clawdia's Ruler */}
+              <div className="bg-violet-glow/10 p-6 rounded-xl border border-violet-bright/30">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-3xl">📏</span>
+                  <h4 className="text-xl font-heading font-bold text-violet-bright">Clawdia's Ruler</h4>
+                </div>
+                <p className="text-text-secondary mb-3">
+                  Each round, Clawdia picks <strong>3 valid word lengths</strong> (between 4-12 letters). Your word must match ONE of them.
+                </p>
+                <div className="bg-background-darker p-3 rounded-lg text-sm font-mono">
+                  <div className="text-amber-glow mb-2">Example: Ruler = 5, 8, 11</div>
+                  <div className="text-green-400">✓ "STORM" (5 letters) - valid</div>
+                  <div className="text-green-400">✓ "BALANCED" (8 letters) - valid</div>
+                  <div className="text-red-400">✗ "CAT" (3 letters) - wrong length</div>
+                </div>
+              </div>
+
+              {/* The Spell */}
+              <div className="bg-amber-glow/10 p-6 rounded-xl border border-amber-bright/30">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-3xl">🪄</span>
+                  <h4 className="text-xl font-heading font-bold text-amber-bright">The Spell</h4>
+                </div>
+                <p className="text-text-secondary mb-3">
+                  One of <strong>4 spell types</strong> is active each round. Your word must satisfy the spell's rule.
+                </p>
+                <div className="bg-background-darker p-3 rounded-lg text-sm font-mono">
+                  <div className="text-amber-glow mb-2">The 4 spells:</div>
+                  <div>🚫 <strong>Veto</strong> - must NOT contain [letter]</div>
+                  <div>⚓ <strong>Anchor</strong> - must START with [letter]</div>
+                  <div>🔖 <strong>Seal</strong> - must END with [letter]</div>
+                  <div>💎 <strong>Gem</strong> - must have double letters (LL, TT)</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center bg-red-900/20 p-4 rounded-lg border border-red-500/30">
+              <p className="text-lg font-bold text-red-400 mb-2">
+                ⚠️ Both are HIDDEN until commits close!
+              </p>
+              <p className="text-text-secondary text-sm">
+                You must hedge your word choice to survive unknown constraints. That's the skill.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Main Game Board */}
         <section className="max-w-7xl mx-auto px-4 py-8">
           <GameBoard />
