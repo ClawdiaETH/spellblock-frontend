@@ -136,7 +136,7 @@ export default function Home() {
         </section>
 
         {/* Main Game Board */}
-        <section className="max-w-7xl mx-auto px-4 py-8">
+        <section id="game" className="max-w-7xl mx-auto px-4 py-8">
           <GameBoard />
         </section>
 

@@ -11,7 +11,7 @@ export function ConnectPlayButton() {
     return (
       <button 
         className="arcane-button text-xl px-8 py-4 mb-4"
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        onClick={() => document.getElementById('game')?.scrollIntoView({ behavior: 'smooth' })}
       >
         Scroll up to play ↑
       </button>
