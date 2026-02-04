@@ -112,3 +112,4 @@ export const SPELL_DESCRIPTIONS: Record<number, string> = {
 // Alias for backward compatibility
 export const SPELLBLOCK_ABI = SPELLBLOCK_CORE_ABI
 
+// Force redeploy Tue Feb  3 23:39:56 CST 2026
