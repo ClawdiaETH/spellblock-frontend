@@ -10,26 +10,39 @@ export function FarcasterAutoConnect() {
   const { isConnected, isConnecting } = useAccount()
   const [attempted, setAttempted] = useState(false)
 
+  // Debug logging
   useEffect(() => {
-    // Only auto-connect in mini app environment
-    if (!isInMiniApp || !isReady) return
-    
-    // Already connected, connecting, or attempted
+    console.log('FarcasterAutoConnect state:', {
+      isInMiniApp,
+      isReady,
+      isConnected,
+      isConnecting,
+      attempted,
+      connectorIds: connectors.map(c => ({ id: c.id, name: c.name, type: c.type }))
+    })
+  }, [isInMiniApp, isReady, isConnected, isConnecting, attempted, connectors])
+
+  useEffect(() => {
+    // Try to connect if we have a Farcaster connector, regardless of mini app detection
+    // The connector itself knows if it's in a valid environment
     if (isConnected || isConnecting || attempted) return
+    
+    // Wait for SDK to be ready
+    if (!isReady) return
 
     // Find the Farcaster connector
     const farcasterConnector = connectors.find(
-      (c) => c.id === 'farcasterMiniApp' || c.name.toLowerCase().includes('farcaster')
+      (c) => c.id === 'farcasterMiniApp' || c.type === 'farcasterMiniApp' || c.name.toLowerCase().includes('farcaster')
     )
 
     if (farcasterConnector) {
-      console.log('Auto-connecting Farcaster wallet...')
+      console.log('Found Farcaster connector, attempting connect:', farcasterConnector.id)
       setAttempted(true)
       connect({ connector: farcasterConnector })
     } else {
-      console.log('Farcaster connector not found, available:', connectors.map(c => c.id))
+      console.log('No Farcaster connector in list:', connectors.map(c => c.id))
     }
-  }, [isInMiniApp, isReady, isConnected, isConnecting, connect, connectors, attempted])
+  }, [isReady, isConnected, isConnecting, connect, connectors, attempted])
 
   // This component renders nothing - it just handles auto-connect logic
   return null

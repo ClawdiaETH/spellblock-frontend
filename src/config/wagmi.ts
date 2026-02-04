@@ -6,7 +6,7 @@ import { base } from 'wagmi/chains'
 // Using a demo ID for development - should be replaced for production
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '3a8170812b534d0ff9d794f19a901d64'
 
-// RainbowKit config for web environment
+// RainbowKit config for web environment (fallback)
 export const webConfig = getDefaultConfig({
   appName: 'SpellBlock',
   projectId,
@@ -14,40 +14,38 @@ export const webConfig = getDefaultConfig({
   ssr: false,
 })
 
-// Create mini app config lazily to avoid SSR issues with the SDK
-let _miniAppConfig: ReturnType<typeof createConfig> | null = null
+// Create combined config with Farcaster connector
+let _combinedConfig: ReturnType<typeof createConfig> | null = null
 
 export function getMiniAppConfig() {
-  if (_miniAppConfig) return _miniAppConfig
+  // Return cached config if available
+  if (_combinedConfig) return _combinedConfig
   
-  // Only import the connector client-side
+  // During SSR, return web config
   if (typeof window === 'undefined') {
-    // Return web config as fallback during SSR
     return webConfig
   }
   
-  // Dynamic import connector to avoid SSR issues
-  const { farcasterMiniApp } = require('@farcaster/miniapp-wagmi-connector')
-  
-  _miniAppConfig = createConfig({
-    chains: [base],
-    transports: {
-      [base.id]: http(),
-    },
-    connectors: [farcasterMiniApp()],
-    ssr: false,
-  })
-  
-  return _miniAppConfig
-}
-
-// Detect if we're in a mini app environment
-export function isInMiniApp() {
-  if (typeof window === 'undefined') return false
   try {
-    return window.parent !== window
-  } catch {
-    return false
+    // Import Farcaster connector
+    const { farcasterMiniApp } = require('@farcaster/miniapp-wagmi-connector')
+    
+    // Create config with Farcaster connector
+    // This config works for mini app - Farcaster connector handles wallet connection
+    _combinedConfig = createConfig({
+      chains: [base],
+      transports: {
+        [base.id]: http('https://mainnet.base.org'),
+      },
+      connectors: [farcasterMiniApp()],
+      ssr: false,
+    })
+    
+    console.log('Created Farcaster mini app config')
+    return _combinedConfig
+  } catch (error) {
+    console.error('Failed to create mini app config:', error)
+    return webConfig
   }
 }
 
