@@ -1,4 +1,4 @@
-import { base, baseSepolia } from 'viem/chains'
+import { base } from 'viem/chains'
 
 export const CONTRACTS = {
   [base.id]: {
@@ -12,16 +12,6 @@ export const CONTRACTS = {
     seasonAccumulator: '0x0000000000000000000000000000000000000000' as const, // TBD
     spellEngine: '0x5bE28ab70A71c63825E53a9956ccBD916E556C5C' as const, // SpellEngine
   },
-  [baseSepolia.id]: {
-    spellBlockCore: '0xaB9bae309759f8589E9772b21cD25E1dC869137B' as const, // v3 redeployed 2026-02-03
-    spellBlockGame: '0xaB9bae309759f8589E9772b21cD25E1dC869137B' as const, // Alias for spellBlockCore
-    spellBlockTreasury: '0x0000000000000000000000000000000000000000' as const, // Embedded in game
-    spellBlockScoring: '0x38ad55d120784314802269c4dE0012Cb777A9AC2' as const, // SpellRegistry
-    clawdiaToken: '0xb6669B1258cb0efbFA4D9321D5EC7Caf5d6C19c3' as const, // MockCLAWDIA v3
-    dictionaryVerifier: '0x0000000000000000000000000000000000000000' as const, // Embedded in game
-    streakTracker: '0x0000000000000000000000000000000000000000' as const, // Embedded in game
-    seasonAccumulator: '0x0000000000000000000000000000000000000000' as const, // TBD
-  }
 }
 
 export const SPELLBLOCK_CORE_ABI = [
