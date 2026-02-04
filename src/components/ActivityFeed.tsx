@@ -24,6 +24,7 @@ export function ActivityFeed({ roundId }: { roundId?: bigint }) {
     abi: SPELLBLOCK_CORE_ABI,
     eventName: 'PlayerCommitted',
     args: roundId ? { roundId } : undefined,
+    chainId: baseSepolia.id,
     onLogs: (logs) => {
       const newActivities = logs.map(log => ({
         player: log.args.player!,

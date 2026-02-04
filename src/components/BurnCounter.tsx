@@ -12,6 +12,7 @@ export function BurnCounter() {
     address: contracts.spellBlockTreasury,
     abi: SPELLBLOCK_TREASURY_ABI,
     functionName: 'totalBurned',
+    chainId: baseSepolia.id,
   })
 
   const formatBurned = (burned?: bigint) => {
