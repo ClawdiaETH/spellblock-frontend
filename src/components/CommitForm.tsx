@@ -89,21 +89,14 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
   }, [commitSuccess, roundId, word, salt, stake, onCommitSuccess])
 
   const validateWord = (w: string) => {
-    const letters = letterPool.toLowerCase()
+    const availableLetters = new Set(letterPool.toLowerCase().split(''))
     const wordLower = w.toLowerCase()
-    const letterCounts: Record<string, number> = {}
     
-    // Count available letters
-    for (const l of letters) {
-      letterCounts[l] = (letterCounts[l] || 0) + 1
-    }
-    
-    // Check word uses only available letters
+    // Check word uses only letters from the pool (can reuse letters)
     for (const l of wordLower) {
-      if (!letterCounts[l] || letterCounts[l] <= 0) {
-        return `Letter '${l}' is not available or used too many times`
+      if (!availableLetters.has(l)) {
+        return `Letter '${l}' is not in today's pool`
       }
-      letterCounts[l]--
     }
     
     return null
