@@ -176,10 +176,28 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
           placeholder={`Min: ${formatUnits(minStake, 18)}`}
           className="w-full bg-spell-darker border border-indigo-800 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500"
         />
-        {balance && (
+        {balance !== undefined && (
           <p className="text-xs text-gray-500 mt-1">
             Balance: {parseFloat(formatUnits(balance, 18)).toLocaleString()} $CLAWDIA
           </p>
+        )}
+        {balance !== undefined && balance < minStake && (
+          <div className="mt-2 p-3 bg-red-900/30 border border-red-700 rounded-lg">
+            <p className="text-red-400 text-sm font-medium">
+              ⚠️ Insufficient $CLAWDIA
+            </p>
+            <p className="text-red-300 text-xs mt-1">
+              You need at least {parseFloat(formatUnits(minStake, 18)).toLocaleString()} $CLAWDIA to play.
+            </p>
+            <a 
+              href="https://app.uniswap.org/swap?outputCurrency=0xbbd9aDe16525acb4B336b6dAd3b9762901522B07&chain=base"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block mt-2 px-3 py-1.5 bg-violet-600 hover:bg-violet-500 rounded text-xs font-medium transition-colors"
+            >
+              Buy $CLAWDIA on Uniswap →
+            </a>
+          </div>
         )}
       </div>
 
