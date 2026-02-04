@@ -7,6 +7,7 @@ import { LetterPool } from './LetterPool'
 import { Countdown } from './Countdown'
 import { PotDisplay } from './PotDisplay'
 import { CommitForm } from './CommitForm'
+import { CommittedState } from './CommittedState'
 import { RevealForm } from './RevealForm'
 import { ActivityFeed } from './ActivityFeed'
 import { BurnCounter } from './BurnCounter'
@@ -71,20 +72,19 @@ export function GameBoard() {
     chainId,
   })
 
-  // Parse round data from array response
-  // [roundId, startTime, commitDeadline, revealDeadline, letterPool, ...]
+  // Parse round data from array response - VERIFIED INDICES 2026-02-04
+  // [0]=roundId, [1]=startTime, [2]=commitDeadline, [3]=revealDeadline, 
+  // [4]=letterPool, [5]=spellId, [6]=spellParam, [7]=seedHash, [8]=seed,
+  // [9]=rulerCommitHash, [10]=totalStaked, [11]=jackpotBonus, [12]=numCommits
   const roundData = round ? {
     roundId: round[0] as bigint,
     startTime: round[1] as bigint,
     commitDeadline: round[2] as bigint,
     revealDeadline: round[3] as bigint,
     letterPool: round[4] as `0x${string}`,
-    totalPot: round[11] as bigint,
-    commitCount: round[12] as bigint,
-    revealCount: round[13] as bigint,
-    rolloverFromPrevious: round[14] as bigint,
-    jackpotBonus: round[15] as bigint,
-    phase: round[16] as bigint,
+    totalPot: BigInt(String(round[10] || 0)),    // Fixed: was 11
+    jackpotBonus: BigInt(String(round[11] || 0)), // Fixed: was 15
+    commitCount: BigInt(String(round[12] || 0)),
   } : null
 
   // Compute phase from timestamps (more reliable than stored phase)
@@ -249,15 +249,10 @@ export function GameBoard() {
               />
 
               {hasCommitted ? (
-                <div className="glass-panel p-6 text-center bg-green-900/20 border-green-500/30">
-                  <p className="text-green-400 text-xl font-bold mb-2">✅ Committed!</p>
-                  <p className="text-text-secondary">
-                    Your stake: {commitment ? (Number(commitment.stake) / 1e18).toLocaleString() : '0'} $CLAWDIA
-                  </p>
-                  <p className="text-text-dim text-sm mt-2">
-                    Wait for commit phase to close, then return to reveal your word
-                  </p>
-                </div>
+                <CommittedState 
+                  roundId={currentRoundId} 
+                  stake={commitment?.stake || BigInt(0)} 
+                />
               ) : (
                 currentRoundId && (
                   <CommitForm 
