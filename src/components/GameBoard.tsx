@@ -260,7 +260,7 @@ export function GameBoard() {
 
             {/* Ruler Display */}
             <RulerDisplay 
-              validLengths={round?.validLengths as any || [0, 0, 0]}
+              validLengths={[5, 8, 11]} // Hardcoded for now until proper parsing
               isRevealed={isSpellRevealed}
             />
           </div>
