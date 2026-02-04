@@ -2,8 +2,6 @@
 
 import dynamicImport from 'next/dynamic'
 import { useFarcasterMiniApp } from '@/contexts/FarcasterMiniAppContext'
-import { useFarcasterAutoConnect } from '@/hooks/useFarcasterAutoConnect'
-import { useEffect } from 'react'
 
 // Dynamically import components that need wagmi context
 const WalletButton = dynamicImport(() => import('@/components/WalletButton').then(mod => mod.WalletButton), {
@@ -21,11 +19,14 @@ const ConnectPlayButton = dynamicImport(() => import('@/components/ConnectPlayBu
   loading: () => <button className="arcane-button text-xl px-8 py-4 mb-4 opacity-50">Connect wallet & play now</button>
 })
 
+// Auto-connect component for mini app - dynamically imported to ensure WagmiProvider is ready
+const FarcasterAutoConnect = dynamicImport(
+  () => import('@/components/FarcasterAutoConnect').then(mod => mod.FarcasterAutoConnect),
+  { ssr: false }
+)
+
 export default function Home() {
   const { isInMiniApp } = useFarcasterMiniApp()
-  
-  // Auto-connect wallet in mini app environment
-  useFarcasterAutoConnect()
 
   // Generate floating particles
   const particles = Array.from({ length: 12 }, (_, i) => (
@@ -42,6 +43,9 @@ export default function Home() {
 
   return (
     <>
+      {/* Auto-connect wallet in mini app */}
+      <FarcasterAutoConnect />
+      
       {/* Floating Particles */}
       <div className="particles">
         {particles}
