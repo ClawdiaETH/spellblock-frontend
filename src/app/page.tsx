@@ -350,7 +350,7 @@ export default function Home() {
                 <div className="text-center">
                   <div className="text-lg font-bold text-violet-bright mb-2">Today's Round</div>
                   <div className="bg-background-darker p-4 rounded-lg font-mono text-sm space-y-2">
-                    <div>📝 Letter pool: <span className="text-amber-glow">A,B,E,L,R,S,T,T</span></div>
+                    <div>📝 Letter pool: <span className="text-amber-glow">A,B,D,E,I,L,M,N,O,R,S,T</span></div>
                     <div>🪄 Spell: <span className="text-violet-bright">??? (hidden)</span></div>
                     <div>📏 Ruler: <span className="text-amber-bright">??? (hidden)</span></div>
                     <div>💰 Total pot: <span className="text-green-400">20M $CLAWDIA</span></div>
@@ -363,20 +363,20 @@ export default function Home() {
                 <div className="text-center">
                   <div className="text-lg font-bold text-violet-bright mb-2">Your Play</div>
                   <div className="bg-background-darker p-4 rounded-lg font-mono text-sm space-y-2">
-                    <div>🎯 Your word: <span className="text-amber-glow">"LETTERS"</span></div>
+                    <div>🎯 Your word: <span className="text-amber-glow">"ASTEROID"</span></div>
                     <div>💎 Your stake: <span className="text-text-secondary">2M $CLAWDIA</span></div>
-                    <div>📊 Base score: <span className="text-text-secondary">7 points</span></div>
+                    <div>📊 Base score: <span className="text-text-secondary">8 points</span></div>
                     <div>🔥 Your streak: <span className="text-violet-bright">5 days (×1.10)</span></div>
-                    <div>🏆 Final score: <span className="text-green-400">7.7 points</span></div>
+                    <div>🏆 Final score: <span className="text-green-400">8.8 points</span></div>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="text-center mt-6 p-4 bg-violet-900/20 rounded-lg border border-violet-500/30">
-              <div className="text-lg font-bold text-violet-bright mb-2">⚡ Reveal moment: Spell = Gem, Ruler = 5, 7, 11</div>
+              <div className="text-lg font-bold text-violet-bright mb-2">⚡ Reveal moment: Spell = Seal D, Ruler = 5, 8, 11</div>
               <p className="text-text-secondary text-sm">
-                "LETTERS" has TT (passes Gem) and is 7 letters (matches ruler). You're in!
+                "ASTEROID" ends with D (passes Seal) and is 8 letters (matches ruler). You're in!
               </p>
             </div>
             
@@ -410,7 +410,7 @@ export default function Home() {
                 <div className="text-text-dim">5 letters × 1pt each</div>
               </div>
               <div>
-                <div className="font-mono text-amber-glow mb-1">"LETTERS" = 7 pts</div>
+                <div className="font-mono text-amber-glow mb-1">"TABLOID" = 7 pts</div>
                 <div className="text-text-dim">Longer words win</div>
               </div>
               <div>
