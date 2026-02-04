@@ -182,7 +182,7 @@ export function GameBoard() {
         </h1>
         <div className="flex items-center justify-center gap-4 text-sm text-text-secondary">
           <span>Phase: {RoundPhase[phase]}</span>
-          {round && (
+          {roundData && (
             <span>Started: {new Date(Number(roundData?.startTime) * 1000).toLocaleTimeString('en-US', { 
               hour: '2-digit', 
               minute: '2-digit', 
@@ -198,13 +198,13 @@ export function GameBoard() {
         <div className="lg:col-span-1 space-y-6">
           <BurnCounter />
           <SeasonLeaderboard />
-          {round && <ActivityFeed roundId={currentRoundId} />}
+          {roundData && <ActivityFeed roundId={currentRoundId} />}
         </div>
 
         {/* Main Game Area */}
         <div className="lg:col-span-2 space-y-6">
           {/* HERO: Live Pot Tracker */}
-          {round && (
+          {roundData && (
             <PotDisplay
               totalPot={roundData?.totalPot}
               commitCount={Number(roundData?.commitCount)}
@@ -264,7 +264,7 @@ export function GameBoard() {
           </div>
 
           {/* Phase-specific content */}
-          {phase === RoundPhase.Commit && round && (
+          {phase === RoundPhase.Commit && roundData && (
             <>
               <Countdown 
                 deadline={Number(roundData?.commitDeadline)} 
@@ -297,7 +297,7 @@ export function GameBoard() {
             </>
           )}
 
-          {phase === RoundPhase.Reveal && round && (
+          {phase === RoundPhase.Reveal && roundData && (
             <>
               {/* Double Reveal Moment - Both spell and ruler revealed */}
               {isSpellRevealed && (
@@ -351,7 +351,7 @@ export function GameBoard() {
             </>
           )}
 
-          {phase === RoundPhase.Finalized && round && (
+          {phase === RoundPhase.Finalized && roundData && (
             <div className="glass-panel p-6 text-center">
               <h2 className="text-2xl font-bold mb-4 text-amber-glow">🏆 Round Complete!</h2>
               <p className="text-text-secondary mb-4">
@@ -367,7 +367,7 @@ export function GameBoard() {
         {/* Right Sidebar */}
         <div className="lg:col-span-1 space-y-6">
           {/* Compact Pot Display */}
-          {round && (
+          {roundData && (
             <PotDisplay
               totalPot={roundData?.totalPot}
               commitCount={Number(roundData?.commitCount)}
