@@ -30,14 +30,14 @@ export default function RootLayout({
           name="fc:miniapp"
           content={JSON.stringify({
             version: "1",
-            imageUrl: "https://spellblock.vercel.app/og-image.svg",
+            imageUrl: "https://spellblock.vercel.app/og-image.png",
             button: {
               title: "Play Now",
               action: {
                 type: "launch_frame",
                 name: "SpellBlock",
                 url: "https://spellblock.vercel.app/",
-                splashImageUrl: "https://spellblock.vercel.app/splash.svg",
+                splashImageUrl: "https://spellblock.vercel.app/splash.png",
                 splashBackgroundColor: "#f5f0ec"
               }
             }
