@@ -98,10 +98,17 @@ export function FarcasterMiniAppProvider({
   )
 }
 
+// Default values for when context isn't available (SSR or before Provider mounts)
+const defaultContext: FarcasterMiniAppContextType = {
+  isInMiniApp: false,
+  isReady: false,
+  user: null,
+  authToken: null,
+  initializeApp: async () => {},
+}
+
 export function useFarcasterMiniApp() {
   const context = useContext(FarcasterMiniAppContext)
-  if (!context) {
-    throw new Error('useFarcasterMiniApp must be used within FarcasterMiniAppProvider')
-  }
-  return context
+  // Return defaults instead of throwing - handles SSR and dynamic import timing
+  return context ?? defaultContext
 }
