@@ -69,49 +69,43 @@ export function FarcasterMiniAppProvider({
     // Skip on server
     if (typeof window === 'undefined') return
     
-    // Check if we're running in a mini app
-    let inMiniApp = false
-    try {
-      inMiniApp = window.parent !== window
-      setIsInMiniApp(inMiniApp)
-      
-      if (inMiniApp) {
-        console.log('Detected mini app environment')
-      }
-    } catch (error) {
-      console.log('Not in mini app environment')
-      setIsInMiniApp(false)
-    }
-
-    // Auto-initialize if in mini app
-    if (inMiniApp) {
-      // Small delay to let React hydrate, then call ready()
-      const timer = setTimeout(async () => {
-        try {
-          const { sdk } = await import('@farcaster/miniapp-sdk')
+    // Always try to initialize SDK - it will only work in mini app context
+    // This is more reliable than checking window.parent
+    const initSDK = async () => {
+      try {
+        const { sdk } = await import('@farcaster/miniapp-sdk')
+        
+        // Check if we have context (means we're in a mini app)
+        const context = await sdk.context
+        
+        if (context) {
+          console.log('Mini app context detected:', context)
+          setIsInMiniApp(true)
           
-          // Get context if available
-          try {
-            const context = await sdk.context
-            if (context?.user) {
-              setUser(context.user)
-            }
-          } catch (e) {
-            console.log('Could not get user context:', e)
+          if (context.user) {
+            setUser(context.user)
           }
           
           // Call ready to dismiss splash screen
           await sdk.actions.ready()
           setIsReady(true)
           console.log('Mini app ready() called successfully')
-        } catch (error) {
-          console.error('Failed to initialize mini app:', error)
-          setIsReady(true) // Still mark ready to prevent infinite loading
+        } else {
+          console.log('No mini app context - running in web mode')
+          setIsInMiniApp(false)
+          setIsReady(true)
         }
-      }, 500) // Short delay for hydration
-      
-      return () => clearTimeout(timer)
+      } catch (error) {
+        console.log('SDK initialization error (likely not in mini app):', error)
+        // Not in mini app or SDK failed - that's fine for web
+        setIsInMiniApp(false)
+        setIsReady(true)
+      }
     }
+    
+    // Small delay to ensure React has hydrated
+    const timer = setTimeout(initSDK, 100)
+    return () => clearTimeout(timer)
   }, [])
 
   const value: FarcasterMiniAppContextType = {
