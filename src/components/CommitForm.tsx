@@ -6,6 +6,7 @@ import { parseUnits, formatUnits, keccak256, encodePacked, toHex } from 'viem'
 import { base } from 'viem/chains'
 import { CONTRACTS, SPELLBLOCK_ABI, ERC20_ABI } from '@/config/contracts'
 import { useDictionary } from '@/hooks/useDictionary'
+import { ClawdiaSwapButton } from './ClawdiaSwapButton'
 
 interface CommitFormProps {
   roundId: bigint
@@ -199,14 +200,17 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
             <p className="text-red-300 text-xs mt-1">
               You need at least {parseFloat(formatUnits(minStake, 18)).toLocaleString()} $CLAWDIA to play.
             </p>
-            <a 
-              href="https://app.uniswap.org/swap?outputCurrency=0xbbd9aDe16525acb4B336b6dAd3b9762901522B07&chain=base"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block mt-2 px-3 py-1.5 bg-violet-600 hover:bg-violet-500 rounded text-xs font-medium transition-colors"
-            >
-              Buy $CLAWDIA on Uniswap →
-            </a>
+            <div className="flex flex-col sm:flex-row gap-2 mt-2">
+              <ClawdiaSwapButton className="text-xs px-3 py-1.5" />
+              <a 
+                href="https://app.uniswap.org/swap?outputCurrency=0xbbd9aDe16525acb4B336b6dAd3b9762901522B07&chain=base"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-3 py-1.5 bg-violet-600 hover:bg-violet-500 rounded text-xs font-medium transition-colors text-center"
+              >
+                Buy on Uniswap →
+              </a>
+            </div>
           </div>
         )}
       </div>

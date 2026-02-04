@@ -1,6 +1,8 @@
 'use client'
 
 import dynamicImport from 'next/dynamic'
+import { useFarcasterMiniApp } from '@/contexts/FarcasterMiniAppContext'
+import { useEffect } from 'react'
 
 // Dynamically import components that need wagmi context
 const WalletButton = dynamicImport(() => import('@/components/WalletButton').then(mod => mod.WalletButton), {
@@ -19,6 +21,20 @@ const ConnectPlayButton = dynamicImport(() => import('@/components/ConnectPlayBu
 })
 
 export default function Home() {
+  const { isInMiniApp, initializeApp, isReady } = useFarcasterMiniApp()
+
+  // Initialize mini app after components load
+  useEffect(() => {
+    if (isInMiniApp && !isReady) {
+      // Wait a bit for game data to load, then initialize
+      const timer = setTimeout(() => {
+        initializeApp()
+      }, 2000) // 2 second delay to ensure game board loads
+      
+      return () => clearTimeout(timer)
+    }
+  }, [isInMiniApp, isReady, initializeApp])
+
   // Generate floating particles
   const particles = Array.from({ length: 12 }, (_, i) => (
     <div

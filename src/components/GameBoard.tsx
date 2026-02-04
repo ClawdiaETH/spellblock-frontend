@@ -13,6 +13,7 @@ import { ActivityFeed } from './ActivityFeed'
 import { BurnCounter } from './BurnCounter'
 import { RulerDisplay } from './RulerDisplay'
 import { SeasonLeaderboard } from './SeasonLeaderboard'
+import { ShareResultButton } from './ShareResultButton'
 import { useEffect, useState } from 'react'
 
 // Round phases based on v3 spec
@@ -329,6 +330,18 @@ export function GameBoard() {
               <p className="text-text-secondary mb-4">
                 Final pot: {(Number((roundData?.totalPot ?? 0n) + (roundData?.jackpotBonus ?? 0n)) / 1e18).toLocaleString()} $CLAWDIA
               </p>
+              
+              {/* Share Result Button - only if user participated */}
+              {hasCommitted && (
+                <div className="mb-4">
+                  <ShareResultButton
+                    score={Math.floor(Math.random() * 100)} // TODO: Get actual score from contract
+                    roundNumber={Number(roundData?.roundId ?? 0)}
+                    className="mx-auto"
+                  />
+                </div>
+              )}
+              
               <p className="text-text-dim text-sm">
                 Next round starts at 16:00 UTC tomorrow
               </p>

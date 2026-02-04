@@ -1,0 +1,18 @@
+{
+  "accountAssociation": {
+    "header": "GENERATE_THIS_VIA_FARCASTER_DEV_TOOLS",
+    "payload": "GENERATE_THIS_VIA_FARCASTER_DEV_TOOLS", 
+    "signature": "GENERATE_THIS_VIA_FARCASTER_DEV_TOOLS"
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "SpellBlock",
+    "iconUrl": "https://spellblock.vercel.app/icon.png",
+    "homeUrl": "https://spellblock.vercel.app/",
+    "imageUrl": "https://spellblock.vercel.app/og-image.png",
+    "buttonTitle": "Play Now",
+    "splashImageUrl": "https://spellblock.vercel.app/splash.png",
+    "splashBackgroundColor": "#f5f0ec",
+    "webhookUrl": "https://spellblock.vercel.app/api/webhook"
+  }
+}
