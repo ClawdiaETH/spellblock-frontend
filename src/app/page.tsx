@@ -1,9 +1,13 @@
 'use client'
 
 import dynamicImport from 'next/dynamic'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 
-// Dynamically import GameBoard to avoid SSR issues
+// Dynamically import components that need wagmi context
+const WalletButton = dynamicImport(() => import('@/components/WalletButton').then(mod => mod.WalletButton), {
+  ssr: false,
+  loading: () => <button className="px-4 py-2 bg-violet-600/50 rounded-lg text-white/50 font-medium animate-pulse">Connect Wallet</button>
+})
+
 const GameBoard = dynamicImport(() => import('@/components/GameBoard').then(mod => mod.GameBoard), {
   ssr: false,
   loading: () => <div className="animate-pulse bg-spell-dark/50 rounded-xl h-96" />
@@ -46,12 +50,7 @@ export default function Home() {
             
             {/* Wallet Connect */}
             <div className="relative">
-              <ConnectButton 
-                label="Connect Wallet"
-                showBalance={false}
-                chainStatus="icon"
-                accountStatus="address"
-              />
+              <WalletButton />
             </div>
           </div>
         </header>
