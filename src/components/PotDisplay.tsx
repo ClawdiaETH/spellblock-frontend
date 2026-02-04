@@ -52,7 +52,7 @@ export function PotDisplay({
       <div className="text-center">
         {/* HERO Pot Display */}
         <div className={`relative ${isAnimating ? 'animate-pulse' : ''}`}>
-          <div className="status-orb w-64 h-64 md:w-80 md:h-80 flex flex-col items-center justify-center text-center">
+          <div className="status-orb w-48 h-48 md:w-56 md:h-56 flex flex-col items-center justify-center text-center">
             <div className="runic-ring"></div>
             <div className="runic-ring"></div>
             
@@ -61,10 +61,10 @@ export function PotDisplay({
                 Live Pot
               </div>
               
-              <div className={`text-5xl md:text-6xl font-display font-bold mb-2 ${
+              <div className={`text-3xl md:text-4xl font-display font-bold mb-1 ${
                 isJackpotActive ? 'text-amber-glow animate-pulse' : 'text-violet-glow'
               }`}>
-                {formatted.value}{formatted.suffix && <span className="text-3xl md:text-4xl">{formatted.suffix}</span>}
+                {formatted.value}{formatted.suffix && <span className="text-xl md:text-2xl">{formatted.suffix}</span>}
               </div>
               
               <div className="text-lg font-heading text-text-secondary mb-4">
