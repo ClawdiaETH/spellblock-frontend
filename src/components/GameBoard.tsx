@@ -191,17 +191,6 @@ export function GameBoard() {
 
         {/* Main Game Area */}
         <div className="lg:col-span-2 space-y-6">
-          {/* HERO: Live Pot Tracker */}
-          {roundData && (
-            <PotDisplay
-              totalPot={roundData?.totalPot}
-              commitCount={Number(roundData?.commitCount)}
-              jackpotBonus={roundData?.jackpotBonus ?? 0n}
-              rolloverAmount={rolloverAmount}
-              isHero={true}
-            />
-          )}
-
           {/* Letter Pool */}
           {letterPool && (
             <div className="glass-panel p-6">
