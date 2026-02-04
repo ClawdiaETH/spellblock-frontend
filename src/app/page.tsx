@@ -91,7 +91,7 @@ export default function Home() {
         <section className="max-w-4xl mx-auto px-4 py-12 mb-8">
           <div className="glass-panel p-8 border-2 border-amber-glow/30">
             <h3 className="text-3xl font-display font-bold text-center mb-6 text-amber-glow">
-              ⚠️ The Challenge: Two Hidden Constraints
+              ⚠️ The challenge: two hidden constraints
             </h3>
             <p className="text-center text-lg text-text-secondary mb-8">
               Every round, your word must survive <strong className="text-violet-bright">BOTH</strong> hidden constraints to win the main prize:
@@ -119,7 +119,7 @@ export default function Home() {
               <div className="bg-amber-glow/10 p-6 rounded-xl border border-amber-bright/30">
                 <div className="flex items-center gap-3 mb-4">
                   <span className="text-3xl">🪄</span>
-                  <h4 className="text-xl font-heading font-bold text-amber-bright">The Spell</h4>
+                  <h4 className="text-xl font-heading font-bold text-amber-bright">The spell</h4>
                 </div>
                 <p className="text-text-secondary mb-3">
                   One of <strong>4 spell types</strong> is active each round. Your word must satisfy the spell's rule.
@@ -173,7 +173,7 @@ export default function Home() {
               </div>
               
               <h4 className="text-xl font-heading font-bold mb-3 text-violet-bright">
-                Commit Phase (8 hours)
+                Commit phase (8 hours)
               </h4>
               <ul className="text-text-secondary font-body text-sm leading-relaxed text-left space-y-2">
                 <li>• Round opens at 16:00 UTC daily</li>
@@ -193,7 +193,7 @@ export default function Home() {
               </div>
               
               <h4 className="text-xl font-heading font-bold mb-3 text-amber-bright">
-                Double Reveal Moment
+                Double reveal moment
               </h4>
               <ul className="text-text-secondary font-body text-sm leading-relaxed text-left space-y-2">
                 <li>• Commits close at 00:00 UTC</li>
@@ -213,7 +213,7 @@ export default function Home() {
               </div>
               
               <h4 className="text-xl font-heading font-bold mb-3 text-violet-bright">
-                Reveal & Finalize (4 hours)
+                Reveal & finalize (4 hours)
               </h4>
               <ul className="text-text-secondary font-body text-sm leading-relaxed text-left space-y-2">
                 <li>• Players reveal actual words + salt</li>
@@ -230,18 +230,27 @@ export default function Home() {
             <h4 className="text-2xl font-heading font-bold mb-4 text-amber-bright">
               💰 What you can win
             </h4>
+            
+            {/* Pot distribution breakdown */}
+            <div className="bg-background-darker p-4 rounded-lg mb-6 max-w-md mx-auto">
+              <div className="text-sm font-mono text-text-secondary space-y-1">
+                <div>Total pot → <span className="text-red-400">3% treasury</span> (1% burn, 1% stakers, 1% ops)</div>
+                <div>Remaining 97% → <span className="text-green-400">90% winners</span> + <span className="text-amber-glow">10% consolation</span></div>
+              </div>
+            </div>
+
             <div className="grid md:grid-cols-3 gap-6 text-sm">
               <div>
-                <div className="text-violet-glow font-bold text-lg mb-2">Daily pot share</div>
-                <p className="text-text-secondary">90% of pot split by score<br/>(typical pots: 10M-100M $CLAWDIA)</p>
+                <div className="text-violet-glow font-bold text-lg mb-2">Winners pool (~87%)</div>
+                <p className="text-text-secondary">Pass both constraints?<br/>Split 90% of remaining pot by score</p>
               </div>
               <div>
                 <div className="text-violet-glow font-bold text-lg mb-2">Streak bonuses</div>
-                <p className="text-text-secondary">3+ wins: 110% | 7+ wins: 125%<br/>14+ wins: 150% multiplier!</p>
+                <p className="text-text-secondary">3+ wins: ×1.10 | 7+ wins: ×1.25<br/>14+ wins: ×1.50 multiplier!</p>
               </div>
               <div>
-                <div className="text-violet-glow font-bold text-lg mb-2">Consolation pool</div>
-                <p className="text-text-secondary">Pass spell but miss ruler?<br/>Share 10% consolation (capped at stake)</p>
+                <div className="text-violet-glow font-bold text-lg mb-2">Consolation (~10%)</div>
+                <p className="text-text-secondary">Pass spell but miss ruler?<br/>Share consolation (capped at stake)</p>
               </div>
             </div>
           </div>
@@ -249,7 +258,7 @@ export default function Home() {
           {/* The 4 Spell Types */}
           <div className="mb-16">
             <h4 className="text-2xl font-heading font-bold text-center mb-8 text-amber-bright">
-              🪄 The Four Spell Types
+              🪄 The four spell types
             </h4>
             <p className="text-center text-text-secondary font-body mb-8 max-w-2xl mx-auto">
               Each round brings a different spell constraint. Only words that pass both the spell and length requirements win!
@@ -374,8 +383,8 @@ export default function Home() {
             <div className="text-center mt-4 p-4 bg-green-900/20 rounded-lg border border-green-500/30">
               <div className="text-2xl font-bold text-green-400 mb-2">Result: You win ~8M $CLAWDIA!</div>
               <p className="text-text-secondary text-sm">
-                20M pot → 3% treasury (0.6M) → 19.4M remains → 90% winners pool (17.5M)<br/>
-                You had highest score among 3 valid winners → largest share of 17.5M pool!
+                20M pot → 3% treasury (0.6M) → 19.4M remains (97%)<br/>
+                Winners get 90% of 19.4M = 17.5M | You're top scorer among 3 winners!
               </p>
             </div>
             
