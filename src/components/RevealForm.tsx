@@ -66,7 +66,7 @@ export function RevealForm({ roundId, spellId, spellParam, onRevealSuccess }: Re
       address: contracts.spellBlockGame,
       abi: SPELLBLOCK_ABI,
       functionName: 'reveal',
-      args: [word.toLowerCase(), salt as `0x${string}`, [], []],
+      args: [word.toLowerCase(), salt as `0x${string}`, [] as `0x${string}`[]],
     })
   }
 

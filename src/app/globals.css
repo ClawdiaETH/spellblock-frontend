@@ -22,6 +22,9 @@
   --violet-bright: #c77dff;
   --violet-dim: #6a2c91;
   --arcane-teal: #4ecdc4;
+  --red-bright: #ff6b6b;
+  --red-400: #f87171;
+  --green-400: #4ade80;
   
   /* Text */
   --text-primary: #e8e6e3;
@@ -45,10 +48,16 @@
 .text-text-secondary { color: var(--text-secondary); }
 .text-text-dim { color: var(--text-dim); }
 .text-amber-glow { color: var(--amber-glow); }
+.text-amber-bright { color: var(--amber-bright); }
 .text-violet-glow { color: var(--violet-glow); }
+.text-violet-bright { color: var(--violet-bright); }
+.text-red-bright { color: var(--red-bright); }
+.text-red-400 { color: var(--red-400); }
+.text-green-400 { color: var(--green-400); }
 .bg-void-deep { background-color: var(--void-deep); }
 .bg-void-medium { background-color: var(--void-medium); }
 .bg-void-light { background-color: var(--void-light); }
+.bg-background-darker { background-color: rgba(18, 18, 31, 0.8); }
 
 /* Background effects */
 body {

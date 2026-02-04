@@ -1,58 +1,90 @@
-import { baseSepolia } from 'viem/chains'
+import { base, baseSepolia } from 'viem/chains'
 
 export const CONTRACTS = {
+  [base.id]: {
+    spellBlockCore: '0x0000000000000000000000000000000000000000' as const, // TBD - main game contract
+    spellBlockGame: '0x0000000000000000000000000000000000000000' as const, // Alias for spellBlockCore
+    spellBlockTreasury: '0x0000000000000000000000000000000000000000' as const, // TBD - treasury contract
+    spellBlockScoring: '0x0000000000000000000000000000000000000000' as const, // TBD - scoring contract
+    clawdiaToken: '0xbbd9aDe16525acb4B336b6dAd3b9762901522B07' as const,
+    dictionaryVerifier: '0x0000000000000000000000000000000000000000' as const, // TBD
+    streakTracker: '0x0000000000000000000000000000000000000000' as const, // TBD
+    seasonAccumulator: '0x0000000000000000000000000000000000000000' as const, // TBD
+  },
   [baseSepolia.id]: {
-    spellBlockGame: '0xD033205b72015a45ddFFa93484F13a051a637799' as const,
-    clawdiaToken: '0x5b0654368986069f2EAb72681Bfc5d4144fc8a32' as const,
-    dictionaryVerifier: '0xC5a2662e098ffB3DFFc4a5a5C9CB93648498Ee90' as const,
-    spellEngine: '0x76d6e6aB49A9A6Ac1D67A87182b55E64983c4db2' as const,
-    stakerDistributor: '0xA3c10C957cEbDbfc3737ec259c6deF70E72A03B0' as const,
+    spellBlockCore: '0x86a495D7FFfDDdf6B0952fd4F57Bc1c39dbDC6E5' as const,
+    spellBlockGame: '0x86a495D7FFfDDdf6B0952fd4F57Bc1c39dbDC6E5' as const, // Alias for spellBlockCore
+    spellBlockTreasury: '0x6EAa40539FeC3255cB45382145376E022287222d' as const,
+    spellBlockScoring: '0x339bBe3a05e91CFA00104623ee8B7c0f2210C865' as const, // SpellEngine
+    clawdiaToken: '0xC9be6f5E9CCC0e4C591d4bafa4c068AfACC39F32' as const, // MockCLAWDIA
+    dictionaryVerifier: '0xF8133a7A530679435D460b00B152b0ef7Bee8337' as const,
+    streakTracker: '0x0000000000000000000000000000000000000000' as const, // Embedded in game
+    seasonAccumulator: '0x0000000000000000000000000000000000000000' as const, // TBD
   }
 }
 
-export const SPELLBLOCK_ABI = [
+export const SPELLBLOCK_CORE_ABI = [
   // Read functions
   { type: 'function', name: 'currentRoundId', inputs: [], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
-  { type: 'function', name: 'getRound', inputs: [{ name: 'roundId', type: 'uint256' }], outputs: [{ type: 'tuple', components: [
+  { type: 'function', name: 'rounds', inputs: [{ name: 'roundId', type: 'uint256' }], outputs: [{ type: 'tuple', components: [
     { name: 'roundId', type: 'uint256' },
-    { name: 'letterPool', type: 'bytes10' },
-    { name: 'seedHash', type: 'bytes32' },
-    { name: 'seed', type: 'bytes32' },
-    { name: 'spellParamHash', type: 'bytes32' },
+    { name: 'startTime', type: 'uint256' },
+    { name: 'commitDeadline', type: 'uint256' },
+    { name: 'revealDeadline', type: 'uint256' },
+    { name: 'letterPool', type: 'bytes12' },
+    { name: 'rulerCommitHash', type: 'bytes32' },
+    { name: 'validLengths', type: 'uint8[3]' },
     { name: 'spellId', type: 'uint8' },
     { name: 'spellParam', type: 'bytes32' },
-    { name: 'startTime', type: 'uint40' },
-    { name: 'commitDeadline', type: 'uint40' },
-    { name: 'revealDeadline', type: 'uint40' },
-    { name: 'totalStaked', type: 'uint256' },
-    { name: 'numCommits', type: 'uint32' },
-    { name: 'numReveals', type: 'uint32' },
-    { name: 'jackpotTriggered', type: 'bool' },
-    { name: 'finalized', type: 'bool' },
+    { name: 'seedHash', type: 'bytes32' },
+    { name: 'revealedSeed', type: 'bytes32' },
+    { name: 'totalPot', type: 'uint256' },
+    { name: 'commitCount', type: 'uint256' },
+    { name: 'revealCount', type: 'uint256' },
+    { name: 'rolloverFromPrevious', type: 'uint256' },
+    { name: 'jackpotBonus', type: 'uint256' },
+    { name: 'phase', type: 'uint8' },
   ]}], stateMutability: 'view' },
-  { type: 'function', name: 'getCommitment', inputs: [{ name: 'roundId', type: 'uint256' }, { name: 'player', type: 'address' }], outputs: [{ type: 'tuple', components: [
+  { type: 'function', name: 'commitments', inputs: [{ name: 'roundId', type: 'uint256' }, { name: 'player', type: 'address' }], outputs: [{ type: 'tuple', components: [
     { name: 'commitHash', type: 'bytes32' },
     { name: 'stake', type: 'uint256' },
-    { name: 'commitTime', type: 'uint40' },
+    { name: 'commitTimestamp', type: 'uint256' },
     { name: 'revealed', type: 'bool' },
-    { name: 'spellPass', type: 'bool' },
-    { name: 'effectiveScore', type: 'uint16' },
-    { name: 'payout', type: 'uint256' },
-    { name: 'claimed', type: 'bool' },
+    { name: 'forfeited', type: 'bool' },
   ]}], stateMutability: 'view' },
-  { type: 'function', name: 'minStake', inputs: [], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
-  { type: 'function', name: 'streakCount', inputs: [{ name: 'player', type: 'address' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
+  { type: 'function', name: 'rolloverAmount', inputs: [], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
   
   // Write functions  
-  { type: 'function', name: 'commit', inputs: [{ name: 'commitHash', type: 'bytes32' }, { name: 'stakeAmount', type: 'uint256' }], outputs: [], stateMutability: 'nonpayable' },
-  { type: 'function', name: 'reveal', inputs: [{ name: 'word', type: 'string' }, { name: 'salt', type: 'bytes32' }, { name: 'dictProof', type: 'bytes32[]' }, { name: 'categoryProof', type: 'bytes32[]' }], outputs: [], stateMutability: 'nonpayable' },
-  { type: 'function', name: 'claimPayout', inputs: [{ name: 'roundId', type: 'uint256' }], outputs: [], stateMutability: 'nonpayable' },
+  { type: 'function', name: 'commit', inputs: [{ name: 'commitHash', type: 'bytes32' }, { name: 'stake', type: 'uint256' }], outputs: [], stateMutability: 'nonpayable' },
+  { type: 'function', name: 'reveal', inputs: [{ name: 'word', type: 'string' }, { name: 'salt', type: 'bytes32' }, { name: 'merkleProof', type: 'bytes32[]' }], outputs: [], stateMutability: 'nonpayable' },
   
   // Events
-  { type: 'event', name: 'RoundOpened', inputs: [{ name: 'roundId', type: 'uint256', indexed: true }, { name: 'letterPool', type: 'bytes10', indexed: false }, { name: 'startTime', type: 'uint40', indexed: false }] },
-  { type: 'event', name: 'CommitSubmitted', inputs: [{ name: 'roundId', type: 'uint256', indexed: true }, { name: 'player', type: 'address', indexed: true }, { name: 'stake', type: 'uint256', indexed: false }, { name: 'timestamp', type: 'uint40', indexed: false }, { name: 'streak', type: 'uint256', indexed: false }] },
-  { type: 'event', name: 'SeedRevealed', inputs: [{ name: 'roundId', type: 'uint256', indexed: true }, { name: 'spellId', type: 'uint8', indexed: false }, { name: 'spellParam', type: 'bytes32', indexed: false }] },
-  { type: 'event', name: 'WordRevealed', inputs: [{ name: 'roundId', type: 'uint256', indexed: true }, { name: 'player', type: 'address', indexed: true }, { name: 'effectiveScore', type: 'uint16', indexed: false }, { name: 'spellPass', type: 'bool', indexed: false }] },
+  { type: 'event', name: 'RoundStarted', inputs: [{ name: 'roundId', type: 'uint256', indexed: true }, { name: 'startTime', type: 'uint256' }, { name: 'commitDeadline', type: 'uint256' }, { name: 'revealDeadline', type: 'uint256' }, { name: 'rulerCommitHash', type: 'bytes32' }] },
+  { type: 'event', name: 'PlayerCommitted', inputs: [{ name: 'roundId', type: 'uint256', indexed: true }, { name: 'player', type: 'address', indexed: true }, { name: 'stake', type: 'uint256' }, { name: 'newTotalPot', type: 'uint256' }, { name: 'newCommitCount', type: 'uint256' }] },
+  { type: 'event', name: 'SeedRevealed', inputs: [{ name: 'roundId', type: 'uint256', indexed: true }, { name: 'letterPool', type: 'bytes12' }, { name: 'spellId', type: 'uint8' }, { name: 'spellParam', type: 'bytes32' }, { name: 'validLengths', type: 'uint8[3]' }] },
+  { type: 'event', name: 'PlayerRevealed', inputs: [{ name: 'roundId', type: 'uint256', indexed: true }, { name: 'player', type: 'address', indexed: true }, { name: 'effectiveScore', type: 'uint256' }, { name: 'lengthValid', type: 'bool' }, { name: 'spellValid', type: 'bool' }] },
+  { type: 'event', name: 'JackpotSeeded', inputs: [{ name: 'roundId', type: 'uint256', indexed: true }, { name: 'bonusAmount', type: 'uint256' }, { name: 'newTotalPot', type: 'uint256' }] },
+  { type: 'event', name: 'RoundFinalized', inputs: [{ name: 'roundId', type: 'uint256', indexed: true }, { name: 'totalPot', type: 'uint256' }, { name: 'validWinnerCount', type: 'uint256' }, { name: 'consolationWinnerCount', type: 'uint256' }] },
+] as const
+
+export const SPELLBLOCK_TREASURY_ABI = [
+  // Read functions
+  { type: 'function', name: 'totalBurned', inputs: [], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
+  { type: 'function', name: 'totalDistributedToStakers', inputs: [], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
+  { type: 'function', name: 'totalDistributedToWinners', inputs: [], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
+  
+  // Events
+  { type: 'event', name: 'TokensBurned', inputs: [{ name: 'roundId', type: 'uint256', indexed: true }, { name: 'amount', type: 'uint256' }, { name: 'newTotalBurned', type: 'uint256' }] },
+  { type: 'event', name: 'PlayerPaid', inputs: [{ name: 'roundId', type: 'uint256', indexed: true }, { name: 'player', type: 'address', indexed: true }, { name: 'amount', type: 'uint256' }, { name: 'isConsolation', type: 'bool' }] },
+] as const
+
+export const STREAK_TRACKER_ABI = [
+  // Read functions
+  { type: 'function', name: 'streaks', inputs: [{ name: 'player', type: 'address' }], outputs: [{ type: 'tuple', components: [
+    { name: 'lastRoundPlayed', type: 'uint256' },
+    { name: 'currentStreak', type: 'uint256' },
+  ]}], stateMutability: 'view' },
+  { type: 'function', name: 'getMultiplier', inputs: [{ name: 'streak', type: 'uint256' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
 ] as const
 
 export const ERC20_ABI = [
@@ -64,17 +96,19 @@ export const ERC20_ABI = [
 ] as const
 
 export const SPELL_NAMES: Record<number, string> = {
-  1: 'VETO',
-  2: 'ANCHOR', 
-  3: 'SEAL',
-  4: 'SPINE',
-  5: 'CLAW',
+  0: 'Veto',
+  1: 'Anchor', 
+  2: 'Seal',
+  3: 'Gem',
 }
 
 export const SPELL_DESCRIPTIONS: Record<number, string> = {
-  1: 'Word must NOT contain a specific letter',
-  2: 'Word must START with a specific letter',
-  3: 'Word must CONTAIN a specific letter',
-  4: 'Word must have ADJACENT duplicate letters',
-  5: 'Special constraint revealed by Clawdia',
+  0: 'Word must NOT contain [letter]',
+  1: 'Word must START with [letter]',
+  2: 'Word must END with [letter]',
+  3: 'Word must have adjacent identical letters',
 }
+
+// Alias for backward compatibility
+export const SPELLBLOCK_ABI = SPELLBLOCK_CORE_ABI
+
