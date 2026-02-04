@@ -75,22 +75,7 @@ export default function Home() {
             <strong className="text-violet-bright">Daily rounds at 16:00 UTC!</strong>
           </p>
           
-          {/* Quick Appeal CTAs */}
-          <div className="grid md:grid-cols-3 gap-4 max-w-3xl mx-auto">
-            <div className="glass-panel p-4 text-center">
-              <div className="text-2xl font-bold text-violet-bright">⚡ Daily rounds</div>
-              <div className="text-sm text-text-secondary">12-hour cycles</div>
-            </div>
-            <div className="glass-panel p-4 text-center">
-              <div className="text-2xl font-bold text-amber-bright">💰 Live pot tracker</div>
-              <div className="text-sm text-text-secondary">Watch pot grow in real-time</div>
-            </div>
-            <div className="glass-panel p-4 text-center">
-              <div className="text-2xl font-bold text-arcane-teal">🎯 Double constraints</div>
-              <div className="text-sm text-text-secondary">Spell + ruler lengths</div>
-            </div>
-          </div>
-        </section>
+                  </section>
 
         {/* THE CORE MECHANIC - Two Hidden Constraints */}
         <section className="max-w-4xl mx-auto px-4 py-12 mb-8">
