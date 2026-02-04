@@ -32,25 +32,23 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        {inMiniApp ? (
-          // Mini app environment - no RainbowKit UI
-          <FarcasterMiniAppProvider>
-            {children}
-          </FarcasterMiniAppProvider>
-        ) : (
-          // Web environment - use RainbowKit
-          <RainbowKitProvider 
-            theme={darkTheme({
-              accentColor: '#a855f7',
-              accentColorForeground: 'white',
-              borderRadius: 'medium',
-            })}
-          >
-            <FarcasterMiniAppProvider>
+        <FarcasterMiniAppProvider>
+          {inMiniApp ? (
+            // Mini app environment - no RainbowKit UI
+            children
+          ) : (
+            // Web environment - use RainbowKit
+            <RainbowKitProvider 
+              theme={darkTheme({
+                accentColor: '#a855f7',
+                accentColorForeground: 'white',
+                borderRadius: 'medium',
+              })}
+            >
               {children}
-            </FarcasterMiniAppProvider>
-          </RainbowKitProvider>
-        )}
+            </RainbowKitProvider>
+          )}
+        </FarcasterMiniAppProvider>
       </QueryClientProvider>
     </WagmiProvider>
   )
