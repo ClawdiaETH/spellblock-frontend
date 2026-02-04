@@ -57,7 +57,7 @@ export function PotDisplay({
             <div className="runic-ring"></div>
             
             <div className="relative z-10">
-              <div className="text-sm text-text-dim font-heading uppercase tracking-widest mb-2">
+              <div className="text-sm text-text-dim font-heading tracking-wide mb-2">
                 Live Pot
               </div>
               
@@ -114,7 +114,7 @@ export function PotDisplay({
   // Compact version for sidebar
   return (
     <div className={`glass-panel p-4 text-center ${isAnimating ? 'animate-pulse' : ''}`}>
-      <div className="text-sm text-text-dim font-heading uppercase tracking-widest mb-2">
+      <div className="text-sm text-text-dim font-heading tracking-wide mb-2">
         Current pot
       </div>
       <div className={`text-3xl font-display font-bold mb-2 ${

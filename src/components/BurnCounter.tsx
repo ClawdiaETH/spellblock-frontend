@@ -30,7 +30,7 @@ export function BurnCounter() {
     <div className="glass-panel p-4 text-center">
       <div className="flex items-center justify-center gap-2 mb-2">
         <span className="text-2xl">🔥</span>
-        <h3 className="font-heading font-bold text-red-400">Total Burned</h3>
+        <h3 className="font-heading font-bold text-red-400">Total burned</h3>
       </div>
       
       <div className="text-3xl font-display font-bold text-red-bright mb-1">

@@ -194,7 +194,7 @@ export function GameBoard() {
           {/* Letter Pool */}
           {letterPool && (
             <div className="glass-panel p-6">
-              <h3 className="text-center text-text-dim text-sm mb-4 font-heading uppercase tracking-widest">
+              <h3 className="text-center text-text-dim text-sm mb-4 font-heading tracking-wide">
                 Today's letter pool
               </h3>
               <LetterPool 
@@ -210,7 +210,7 @@ export function GameBoard() {
             <div className="glass-panel p-4">
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-lg">🪄</span>
-                <h3 className="font-heading font-bold text-violet-bright">Today's Spell</h3>
+                <h3 className="font-heading font-bold text-violet-bright">Today's spell</h3>
               </div>
               {isSpellRevealed && spellName && spellDescription ? (
                 <div className="text-center">

@@ -11,7 +11,7 @@ export function RulerDisplay({ validLengths, isRevealed }: RulerDisplayProps) {
       <div className="glass-panel p-4">
         <div className="flex items-center gap-2 mb-3">
           <span className="text-lg">📏</span>
-          <h3 className="font-heading font-bold text-amber-bright">Clawdia's Ruler</h3>
+          <h3 className="font-heading font-bold text-amber-bright">Clawdia's ruler</h3>
         </div>
         
         <div className="text-center">
@@ -30,7 +30,7 @@ export function RulerDisplay({ validLengths, isRevealed }: RulerDisplayProps) {
     <div className="glass-panel p-4">
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg">📏</span>
-        <h3 className="font-heading font-bold text-amber-bright">Clawdia's Ruler</h3>
+        <h3 className="font-heading font-bold text-amber-bright">Clawdia's ruler</h3>
       </div>
       
       <div className="text-center">

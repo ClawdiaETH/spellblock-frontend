@@ -85,7 +85,7 @@ export function ActivityFeed({ roundId }: { roundId?: bigint }) {
     <div className="glass-panel p-4">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-lg">⚡</span>
-        <h3 className="font-heading font-bold text-amber-bright">Live Activity</h3>
+        <h3 className="font-heading font-bold text-amber-bright">Live activity</h3>
       </div>
       
       <div className="space-y-3 max-h-64 overflow-y-auto">
