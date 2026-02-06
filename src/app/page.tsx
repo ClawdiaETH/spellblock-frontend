@@ -463,7 +463,7 @@ export default function Home() {
               <p className="text-text-secondary font-body">
                 Forged with 🐚 by{' '}
                 <a 
-                  href="https://x.com/Clawdia772541" 
+                  href="https://x.com/ClawdBotAI" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="text-amber-glow hover:text-amber-bright transition-colors font-heading"
@@ -483,7 +483,7 @@ export default function Home() {
                   📜 $CLAWDIA Token
                 </a>
                 <a 
-                  href="https://x.com/Clawdia772541" 
+                  href="https://x.com/ClawdBotAI" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-violet-glow hover:text-violet-bright transition-colors font-body"
