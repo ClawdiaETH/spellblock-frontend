@@ -158,7 +158,7 @@ export default function Home() {
             How to play SpellBlock
           </h3>
           <p className="text-center text-text-secondary font-body mb-16 max-w-3xl mx-auto text-lg">
-            A daily strategic word game where you stake $CLAWDIA on your word-crafting skills. <strong>Each round runs for 12 hours!</strong>
+            A daily strategic word game where you stake $CLAWDIA on your word-crafting skills. <strong>Each round runs for 24 hours!</strong>
           </p>
 
           {/* Daily Game Flow */}
@@ -166,7 +166,7 @@ export default function Home() {
             {/* Connecting Line */}
             <div className="hidden md:block absolute top-20 left-1/2 transform -translate-x-1/2 w-2/3 h-0.5 bg-gradient-to-r from-transparent via-violet-glow to-transparent opacity-30"></div>
 
-            {/* Commit Phase: 8 hours */}
+            {/* Commit Phase: 16 hours */}
             <div className="glass-panel p-8 text-center hover:scale-105 transition-all duration-300">
               <div className="relative mb-6">
                 <div className="w-16 h-16 mx-auto bg-gradient-to-br from-violet-dim to-violet-glow rounded-full flex items-center justify-center border-2 border-violet-bright shadow-lg">
@@ -175,7 +175,7 @@ export default function Home() {
               </div>
               
               <h4 className="text-xl font-heading font-bold mb-3 text-violet-bright">
-                Commit phase (8 hours)
+                Commit phase (16 hours)
               </h4>
               <ul className="text-text-secondary font-body text-sm leading-relaxed text-left space-y-2">
                 <li>• Round opens at 16:00 UTC daily</li>
@@ -186,19 +186,19 @@ export default function Home() {
               </ul>
             </div>
 
-            {/* Double Reveal: Instant */}
+            {/* Reveal Phase Start: 08:00 */}
             <div className="glass-panel p-8 text-center hover:scale-105 transition-all duration-300">
               <div className="relative mb-6">
                 <div className="w-16 h-16 mx-auto bg-gradient-to-br from-amber-dim to-amber-glow rounded-full flex items-center justify-center border-2 border-amber-bright shadow-lg">
-                  <span className="text-sm font-display font-bold text-white">00:00</span>
+                  <span className="text-sm font-display font-bold text-white">08:00</span>
                 </div>
               </div>
               
               <h4 className="text-xl font-heading font-bold mb-3 text-amber-bright">
-                Double reveal moment
+                Reveal phase begins
               </h4>
               <ul className="text-text-secondary font-body text-sm leading-relaxed text-left space-y-2">
-                <li>• Commits close at 00:00 UTC</li>
+                <li>• Commits close at 08:00 UTC</li>
                 <li>• Spell revealed simultaneously</li>
                 <li>• Clawdia's 3 ruler lengths revealed</li>
                 <li>• Check if your word survives both!</li>
@@ -206,23 +206,23 @@ export default function Home() {
               </ul>
             </div>
 
-            {/* Reveal Phase: 4 hours */}
+            {/* Reveal Phase: 8 hours */}
             <div className="glass-panel p-8 text-center hover:scale-105 transition-all duration-300">
               <div className="relative mb-6">
                 <div className="w-16 h-16 mx-auto bg-gradient-to-br from-arcane-teal to-violet-glow rounded-full flex items-center justify-center border-2 border-violet-bright shadow-lg">
-                  <span className="text-sm font-display font-bold text-white">04:00</span>
+                  <span className="text-sm font-display font-bold text-white">16:00</span>
                 </div>
               </div>
               
               <h4 className="text-xl font-heading font-bold mb-3 text-violet-bright">
-                Reveal & finalize (4 hours)
+                Reveal & finalize (8 hours)
               </h4>
               <ul className="text-text-secondary font-body text-sm leading-relaxed text-left space-y-2">
                 <li>• Players reveal actual words + salt</li>
                 <li>• Live leaderboard updates</li>
                 <li>• Scoring: 1pt/letter × streak bonus</li>
-                <li>• Round ends at 04:00 UTC</li>
-                <li>• Winners paid, next round starts at 16:00</li>
+                <li>• Round ends at 16:00 UTC</li>
+                <li>• Winners paid, next round starts</li>
               </ul>
             </div>
           </div>
