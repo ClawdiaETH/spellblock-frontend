@@ -3,155 +3,210 @@
 import { useState, useEffect } from 'react'
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { base } from 'viem/chains'
-import { CONTRACTS, SPELLBLOCK_ABI, SPELL_NAMES, SPELL_DESCRIPTIONS } from '@/config/contracts'
+import { CONTRACTS, SPELLBLOCK_ABI } from '@/config/contracts'
+import { getMerkleProof } from '@/utils/merkle'
 
 interface RevealFormProps {
   roundId: bigint
   spellId: number
-  spellParam: string
+  spellParam: `0x${string}`
   onRevealSuccess?: () => void
 }
 
 export function RevealForm({ roundId, spellId, spellParam, onRevealSuccess }: RevealFormProps) {
   const [word, setWord] = useState('')
   const [salt, setSalt] = useState('')
-  const [error, setError] = useState('')
-  const [autoLoaded, setAutoLoaded] = useState(false)
+  const [revealed, setRevealed] = useState(false)
+  const [passesSpell, setPassesSpell] = useState<boolean | null>(null)
+  const [passesRuler, setPassesRuler] = useState<boolean | null>(null)
   
-  const { address, isConnected } = useAccount()
+  const { address } = useAccount()
   const chainId = base.id
   const contracts = CONTRACTS[chainId]
-
-  // Try to load saved commit data
-  useEffect(() => {
-    if (address) {
-      const saved = localStorage.getItem(`spellblock-commit-${roundId}-${address}`)
-      if (saved) {
-        try {
-          const data = JSON.parse(saved)
-          setWord(data.word)
-          setSalt(data.salt)
-          setAutoLoaded(true)
-        } catch (e) {
-          console.error('Failed to load saved commit', e)
-        }
-      }
-    }
-  }, [roundId, address])
 
   const { writeContract: reveal, data: revealHash, isPending: isRevealing } = useWriteContract()
   const { isSuccess: revealSuccess } = useWaitForTransactionReceipt({ hash: revealHash })
 
+  // Load commitment from localStorage
   useEffect(() => {
-    if (revealSuccess && address) {
-      // Clear saved commit data
-      localStorage.removeItem(`spellblock-commit-${roundId}-${address}`)
+    if (!address) return
+    
+    const saved = localStorage.getItem(`spellblock-commit-${roundId}-${address}`)
+    if (saved) {
+      try {
+        const data = JSON.parse(saved)
+        setWord(data.word || '')
+        setSalt(data.salt || '')
+      } catch (e) {
+        console.error('Failed to load commitment:', e)
+      }
+    }
+  }, [address, roundId])
+
+  useEffect(() => {
+    if (revealSuccess) {
       onRevealSuccess?.()
     }
-  }, [revealSuccess, roundId, address, onRevealSuccess])
+  }, [revealSuccess, onRevealSuccess])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-
-    if (!word) {
-      setError('Please enter your word')
-      return
+  const checkConstraints = () => {
+    const w = word.toUpperCase()
+    const letter = spellParam ? String.fromCharCode(parseInt(spellParam.slice(2, 4), 16) || 65) : ''
+    
+    // Check spell
+    let spell = false
+    switch (spellId) {
+      case 0: // Veto
+        spell = !w.includes(letter)
+        break
+      case 1: // Anchor
+        spell = w.startsWith(letter)
+        break
+      case 2: // Seal
+        spell = w.endsWith(letter)
+        break
+      case 3: // Gem
+        spell = /(.)\1/.test(w)
+        break
     }
-
-    if (!salt) {
-      setError('Please enter your salt')
-      return
-    }
-
-    reveal({
-      address: contracts.spellBlockGame,
-      abi: SPELLBLOCK_ABI,
-      functionName: 'reveal',
-      args: [word.toLowerCase(), salt as `0x${string}`, [] as `0x${string}`[]],
-    })
+    
+    // Check ruler (hardcoded for now)
+    const validLengths = [5, 8, 11]
+    const ruler = validLengths.includes(w.length)
+    
+    setPassesSpell(spell)
+    setPassesRuler(ruler)
+    setRevealed(true)
   }
 
-  if (!isConnected) {
+  const handleReveal = async () => {
+    if (!word || !salt) {
+      alert('Missing word or salt. Did you commit in this round?')
+      return
+    }
+
+    try {
+      // Get merkle proof
+      const merkleProof = await getMerkleProof(word)
+      
+      reveal({
+        address: contracts.spellBlockGame,
+        abi: SPELLBLOCK_ABI,
+        functionName: 'reveal',
+        args: [word.toLowerCase(), salt as `0x${string}`, (merkleProof || []) as readonly `0x${string}`[]],
+      })
+    } catch (error) {
+      console.error('Failed to reveal:', error)
+      alert('Failed to generate proof. Please try again.')
+    }
+  }
+
+  const isWinner = passesSpell && passesRuler
+
+  if (!word) {
     return (
-      <div className="bg-spell-dark/50 rounded-xl p-6 text-center">
-        <p className="text-gray-400">Connect your wallet to reveal</p>
+      <div className="bg-surface border border-border rounded-xl p-6 text-center">
+        <p className="text-text-dim text-sm">No commitment found for this round</p>
       </div>
     )
   }
 
-  // Parse spell parameter for display
-  const getSpellDisplay = () => {
-    if (spellId >= 1 && spellId <= 3) {
-      // VETO, ANCHOR, SEAL all use a letter
-      const letter = String.fromCharCode(parseInt(spellParam.slice(2, 4), 16))
-      return (
-        <span className="font-mono text-amber-400 text-2xl">
-          {letter.toUpperCase()}
-        </span>
-      )
-    }
-    return null
-  }
-
   return (
     <div className="space-y-4">
-      {/* Spell Display */}
-      <div className="bg-gradient-to-r from-purple-900/50 to-indigo-900/50 rounded-xl p-6 text-center border border-purple-500/30">
-        <p className="text-sm text-gray-400 mb-2">The spell is...</p>
-        <h2 className="text-3xl font-bold text-purple-300 mb-2">
-          ✨ {SPELL_NAMES[spellId] || 'UNKNOWN'} ✨
-        </h2>
-        <p className="text-gray-400 text-sm mb-4">
-          {SPELL_DESCRIPTIONS[spellId]}
-        </p>
-        {getSpellDisplay()}
+      {/* Your committed word */}
+      <div>
+        <div className="flex items-baseline justify-between mb-2">
+          <h2 className="text-[19px] font-display tracking-tight">Your committed word</h2>
+        </div>
+
+        {!revealed ? (
+          <div className="bg-surface border border-border rounded-xl p-4">
+            <div className="flex gap-1.5 justify-center flex-wrap mb-2">
+              {word.split('').map((_, i) => (
+                <span key={i} className="hidden-char">?</span>
+              ))}
+            </div>
+            <div className="text-xs text-text-dim text-center">
+              {word.length} letters · Reveal to check constraints
+            </div>
+          </div>
+        ) : (
+          <div className="bg-surface border border-border rounded-xl p-4">
+            <div className="flex gap-1.5 justify-center flex-wrap">
+              {word.toUpperCase().split('').map((ch, i) => (
+                <span
+                  key={i}
+                  className={`revealed-char ${isWinner ? 'winner' : 'burned'} animate-revealChar`}
+                  style={{ animationDelay: `${i * 0.07}s` }}
+                >
+                  {ch}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Reveal Form */}
-      <form onSubmit={handleSubmit} className="bg-spell-dark/50 rounded-xl p-6 space-y-4">
-        <h3 className="text-xl font-bold text-center mb-4">Reveal your word</h3>
-
-        {autoLoaded && (
-          <p className="text-green-400 text-sm text-center">
-            ✓ Loaded from your previous commit
-          </p>
-        )}
-        
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Your word</label>
-          <input
-            type="text"
-            value={word}
-            onChange={(e) => setWord(e.target.value.toLowerCase())}
-            placeholder="Enter the word you committed..."
-            className="w-full bg-spell-darker border border-indigo-800 rounded-lg px-4 py-3 text-lg font-mono uppercase tracking-wider focus:outline-none focus:border-indigo-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Your salt</label>
-          <input
-            type="text"
-            value={salt}
-            onChange={(e) => setSalt(e.target.value)}
-            placeholder="0x..."
-            className="w-full bg-spell-darker border border-indigo-800 rounded-lg px-4 py-2 text-sm font-mono focus:outline-none focus:border-indigo-500"
-          />
-        </div>
-
-        {error && (
-          <p className="text-red-400 text-sm">{error}</p>
-        )}
-
+      {/* Action */}
+      {!revealed ? (
         <button
-          type="submit"
+          onClick={checkConstraints}
           disabled={isRevealing}
-          className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 py-3 rounded-lg font-bold transition-all"
+          className="btn-reveal"
         >
-          {isRevealing ? 'Revealing...' : 'Reveal word'}
+          <span>{isRevealing ? 'Revealing...' : 'Reveal my word'}</span>
+          <span className="text-[11.5px] font-normal opacity-70">
+            Show word & check against spell + ruler
+          </span>
         </button>
-      </form>
+      ) : (
+        <div
+          className="flex gap-3.5 items-center p-4 rounded-xl border animate-fadeInUp"
+          style={{
+            background: isWinner ? 'linear-gradient(135deg, #16A34A10, #16A34A20)' : 'linear-gradient(135deg, #DC262610, #DC262620)',
+            borderColor: isWinner ? '#16A34A40' : '#DC262640',
+          }}
+        >
+          <div className="text-4xl">{isWinner ? '🏆' : '🔥'}</div>
+          <div>
+            <div className="font-bold text-lg mb-1" style={{ color: isWinner ? '#16A34A' : '#DC2626' }}>
+              {isWinner ? 'Winner!' : 'Burned'}
+            </div>
+            <div className="text-xs text-text-dim leading-relaxed">
+              {isWinner
+                ? 'Your word survived both constraints. Winnings distribute at 04:00 UTC.'
+                : 'Your word failed. Your stake has been permanently burned.'}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {revealed && (
+        <div className="space-y-2 text-xs">
+          <div className="flex items-center gap-2 p-2 bg-surface-2 rounded">
+            <span className={passesSpell ? 'text-green' : 'text-red'}>
+              {passesSpell ? '✓' : '✗'}
+            </span>
+            <span>Spell check: {passesSpell ? 'PASSES' : 'FAILS'}</span>
+          </div>
+          <div className="flex items-center gap-2 p-2 bg-surface-2 rounded">
+            <span className={passesRuler ? 'text-green' : 'text-red'}>
+              {passesRuler ? '✓' : '✗'}
+            </span>
+            <span>Ruler check: {passesRuler ? 'PASSES' : `FAILS (yours: ${word.length})`}</span>
+          </div>
+        </div>
+      )}
+
+      {revealed && (
+        <button
+          onClick={handleReveal}
+          disabled={isRevealing}
+          className="w-full py-3 px-4 bg-purple hover:bg-purple/90 disabled:opacity-50 text-white font-semibold rounded-xl transition-all"
+        >
+          {isRevealing ? 'Submitting...' : 'Submit reveal onchain'}
+        </button>
+      )}
     </div>
   )
 }

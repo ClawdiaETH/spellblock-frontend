@@ -1,22 +1,14 @@
 'use client'
 
-import { useReadContract, useAccount, useChainId } from 'wagmi'
+import { useReadContract, useAccount } from 'wagmi'
 import { base } from 'viem/chains'
 import { CONTRACTS, SPELLBLOCK_CORE_ABI, SPELL_NAMES, SPELL_DESCRIPTIONS } from '@/config/contracts'
-import { LetterPool } from './LetterPool'
-import { Countdown } from './Countdown'
-import { PotDisplay } from './PotDisplay'
 import { CommitForm } from './CommitForm'
-import { CommittedState } from './CommittedState'
 import { RevealForm } from './RevealForm'
-import { ActivityFeed } from './ActivityFeed'
 import { BurnCounter } from './BurnCounter'
-import { RulerDisplay } from './RulerDisplay'
-import { SeasonLeaderboard } from './SeasonLeaderboard'
-import { ShareResultButton } from './ShareResultButton'
 import { useEffect, useState } from 'react'
 
-// Round phases based on v3 spec
+// Round phases
 enum RoundPhase {
   Inactive = 0,
   Commit = 1,
@@ -24,14 +16,158 @@ enum RoundPhase {
   Finalized = 3
 }
 
+// Spell types with colors
+const SPELL_TYPES: Record<string, { name: string; icon: string; desc: string; color: string }> = {
+  '0': { name: 'Veto', icon: '🚫', desc: 'Must NOT contain', color: '#DC2626' },
+  '1': { name: 'Anchor', icon: '⚓', desc: 'Must START with', color: '#2B6CB0' },
+  '2': { name: 'Seal', icon: '🔒', desc: 'Must END with', color: '#7C3AED' },
+  '3': { name: 'Gem', icon: '💎', desc: 'Must contain a double letter', color: '#D97706' },
+}
+
+function Countdown({ deadline }: { deadline: number }) {
+  const [timeLeft, setTimeLeft] = useState('')
+
+  useEffect(() => {
+    const tick = () => {
+      const now = Math.floor(Date.now() / 1000)
+      const diff = deadline - now
+      if (diff <= 0) return setTimeLeft('00:00:00')
+      const h = Math.floor(diff / 3600)
+      const m = Math.floor((diff % 3600) / 60)
+      const s = diff % 60
+      setTimeLeft(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`)
+    }
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [deadline])
+
+  return (
+    <div className="font-mono text-2xl font-semibold tracking-wide">
+      {timeLeft}
+    </div>
+  )
+}
+
+function PhaseBanner({ phase, deadline, season }: { phase: RoundPhase; deadline: number; season?: { number: number; day: number } }) {
+  const isCommit = phase === RoundPhase.Commit
+  const bgGradient = isCommit
+    ? 'linear-gradient(135deg, #E8F0FE 0%, #F0F4FF 100%)'
+    : 'linear-gradient(135deg, #F0EAFE 0%, #F5F0FF 100%)'
+  const dotColor = isCommit ? '#2B6CB0' : '#7C3AED'
+
+  return (
+    <div
+      className="px-5 py-5 border-b border-border"
+      style={{ background: bgGradient }}
+    >
+      <div className="max-w-[600px] mx-auto">
+        <div className="flex items-start justify-between mb-4 flex-wrap gap-3">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <div
+                className="w-2.5 h-2.5 rounded-full"
+                style={{
+                  background: dotColor,
+                  boxShadow: `0 2px 8px ${dotColor}20`,
+                }}
+              />
+              <span className="text-lg font-semibold">
+                {isCommit ? 'Commit Phase' : 'Reveal Phase'}
+              </span>
+            </div>
+            <div className="text-sm text-text-dim max-w-md">
+              {isCommit
+                ? 'Craft your word and stake your claim. Constraints are hidden.'
+                : 'Spell & ruler revealed. Show your word to claim winnings.'}
+            </div>
+          </div>
+          
+          <div className="text-right">
+            <div className="text-[10px] text-text-dim uppercase tracking-wider mb-0.5">Phase ends in</div>
+            <Countdown deadline={deadline} />
+          </div>
+        </div>
+
+        {/* Phase track */}
+        <div className="flex items-center">
+          <PhaseStep label="Open" time="16:00" active={phase >= RoundPhase.Commit} color={phase >= RoundPhase.Commit ? '#2B6CB0' : '#D8D5CC'} />
+          <div className="flex-1 h-0.5 mx-1" style={{ background: phase >= RoundPhase.Reveal ? '#2B6CB0' : '#D8D5CC' }} />
+          <PhaseStep label="Reveal" time="00:00" active={phase >= RoundPhase.Reveal} color={phase >= RoundPhase.Reveal ? '#7C3AED' : '#D8D5CC'} />
+          <div className="flex-1 h-0.5 mx-1" style={{ background: phase >= RoundPhase.Finalized ? '#7C3AED' : '#D8D5CC' }} />
+          <PhaseStep label="Settle" time="04:00" active={phase >= RoundPhase.Finalized} color={phase >= RoundPhase.Finalized ? '#16A34A' : '#D8D5CC'} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PhaseStep({ label, time, active, color }: { label: string; time: string; active: boolean; color: string }) {
+  return (
+    <div className="flex flex-col items-center gap-0.5 min-w-[48px]">
+      <div
+        className="w-2.5 h-2.5 rounded-full border-2"
+        style={{
+          background: color,
+          borderColor: color,
+          boxShadow: active ? `0 2px 6px ${color}30` : 'none',
+        }}
+      />
+      <span className={`text-[9.5px] font-semibold uppercase tracking-wider ${active ? 'text-text' : 'text-text-dim'}`}>
+        {label}
+      </span>
+      <span className="text-[9.5px] font-mono text-text-dim opacity-50">{time}</span>
+    </div>
+  )
+}
+
+function PotDisplay({ totalPot, commitCount, season }: { totalPot: bigint; commitCount: number; season?: { number: number; day: number } }) {
+  const formatAmount = (n: bigint) => {
+    const val = Number(n) / 1e18
+    if (val >= 1_000_000_000) return (val / 1_000_000_000).toFixed(2) + 'B'
+    if (val >= 1_000_000) return (val / 1_000_000).toFixed(1) + 'M'
+    if (val >= 1_000) return (val / 1_000).toFixed(0) + 'K'
+    return val.toFixed(0)
+  }
+
+  return (
+    <div className="bg-gradient-to-br from-surface to-surface-2 border border-border rounded-2xl px-5 py-6 text-center mb-5">
+      <div className="mb-3">
+        <div className="text-[11px] font-semibold text-text-dim uppercase tracking-[0.1em] mb-0.5">Round pot</div>
+        <div className="font-mono text-[40px] leading-none font-bold text-gold tracking-tight">
+          {formatAmount(totalPot)}
+        </div>
+        <div className="text-xs text-text-dim font-medium mt-0.5">$CLAWDIA</div>
+      </div>
+      
+      <div className="flex items-center justify-center gap-3.5 pt-2.5 border-t border-border text-center">
+        <div className="flex flex-col gap-0.5">
+          <span className="text-[9.5px] text-text-dim uppercase tracking-wider">Commits</span>
+          <span className="font-mono text-sm font-semibold">{commitCount}</span>
+        </div>
+        <div className="w-px h-6 bg-border" />
+        <div className="flex flex-col gap-0.5">
+          <span className="text-[9.5px] text-text-dim uppercase tracking-wider">Season</span>
+          <span className="font-mono text-sm font-semibold">
+            {season ? `S${season.number}·D${season.day}` : '-'}
+          </span>
+        </div>
+        <div className="w-px h-6 bg-border" />
+        <div className="flex flex-col gap-0.5">
+          <span className="text-[9.5px] text-text-dim uppercase tracking-wider">Min stake</span>
+          <span className="font-mono text-sm font-semibold">1M</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function GameBoard() {
   const { address } = useAccount()
-  // Mainnet only
   const chainId = base.id
   const contracts = CONTRACTS[chainId]
   const [currentTime, setCurrentTime] = useState(Math.floor(Date.now() / 1000))
 
-  // Update current time every second
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(Math.floor(Date.now() / 1000))
@@ -39,7 +175,6 @@ export function GameBoard() {
     return () => clearInterval(interval)
   }, [])
 
-  // Get current round ID
   const { data: currentRoundId } = useReadContract({
     address: contracts.spellBlockCore,
     abi: SPELLBLOCK_CORE_ABI,
@@ -47,7 +182,6 @@ export function GameBoard() {
     chainId,
   })
 
-  // Get round data
   const { data: round, refetch: refetchRound } = useReadContract({
     address: contracts.spellBlockCore,
     abi: SPELLBLOCK_CORE_ABI,
@@ -56,7 +190,6 @@ export function GameBoard() {
     chainId,
   })
 
-  // Get user's commitment
   const { data: commitment, refetch: refetchCommitment } = useReadContract({
     address: contracts.spellBlockCore,
     abi: SPELLBLOCK_CORE_ABI,
@@ -65,32 +198,18 @@ export function GameBoard() {
     chainId,
   })
 
-  // Get rollover amount
-  const { data: rolloverAmount } = useReadContract({
-    address: contracts.spellBlockCore,
-    abi: SPELLBLOCK_CORE_ABI,
-    functionName: 'rolloverAmount',
-    chainId,
-  })
-
-  // Parse round data from array response - VERIFIED INDICES 2026-02-04
-  // [0]=roundId, [1]=startTime, [2]=commitDeadline, [3]=revealDeadline, 
-  // [4]=letterPool, [5]=spellId, [6]=spellParam, [7]=seedHash, [8]=seed,
-  // [9]=rulerCommitHash, [10]=totalStaked, [11]=jackpotBonus, [12]=numCommits
   const roundData = round ? {
     roundId: round[0] as bigint,
     startTime: round[1] as bigint,
     commitDeadline: round[2] as bigint,
     revealDeadline: round[3] as bigint,
     letterPool: round[4] as `0x${string}`,
-    spellId: Number(round[5] || 0),              // [5]=spellId
-    spellParam: (round[6] as `0x${string}`) || '0x00', // [6]=spellParam (bytes1)
-    totalPot: BigInt(String(round[10] || 0)),    // Fixed: was 11
-    jackpotBonus: BigInt(String(round[11] || 0)), // Fixed: was 15
+    spellId: Number(round[5] || 0),
+    spellParam: (round[6] as `0x${string}`) || '0x00',
+    totalPot: BigInt(String(round[10] || 0)),
     commitCount: BigInt(String(round[12] || 0)),
   } : null
 
-  // Compute phase from timestamps (more reliable than stored phase)
   const computePhase = () => {
     if (!roundData || !roundData.startTime) return RoundPhase.Inactive
     const start = Number(roundData.startTime)
@@ -104,207 +223,184 @@ export function GameBoard() {
   }
   const phase = computePhase()
 
-  // Decode letter pool from bytes32 (padded bytes8)
   const letterPool = roundData?.letterPool ? 
     Buffer.from(roundData.letterPool.slice(2, 18), 'hex').toString('utf-8').replace(/\0/g, '') : 
     ''
 
-  // Spell is revealed after commit phase ends (during Reveal and Finalized phases)
   const isSpellRevealed = phase === RoundPhase.Reveal || phase === RoundPhase.Finalized
   const spellId = roundData?.spellId ?? 0
   const spellParam = roundData?.spellParam ?? '0x00'
   const spellLetter = spellParam ? String.fromCharCode(parseInt(spellParam.slice(2, 4), 16) || 65) : '?'
-  const spellName = SPELL_NAMES[spellId] || 'Unknown'
-  const spellDescription = (SPELL_DESCRIPTIONS[spellId] || 'Unknown effect').replace('[letter]', spellLetter)
+  const spell = SPELL_TYPES[String(spellId)]
 
-  // Has user committed?
   const hasCommitted = commitment && commitment.commitHash !== '0x0000000000000000000000000000000000000000000000000000000000000000'
-  const hasRevealed = commitment?.revealed
-
-  // Min stake for v3 spec (1M $CLAWDIA)
-  const minStake = BigInt('1000000000000000000000000') // 1,000,000 $CLAWDIA
-
+  const minStake = BigInt('1000000000000000000000000')
 
   if (!currentRoundId || currentRoundId === 0n || phase === RoundPhase.Inactive) {
     return (
-      <div className="max-w-7xl mx-auto p-4">
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Main waiting area */}
-          <div className="lg:col-span-2">
-            <div className="glass-panel p-8 text-center">
-              <h2 className="text-3xl font-display font-bold mb-4 text-amber-glow">🔮 Preparing next ritual</h2>
-              <p className="text-text-secondary text-lg mb-6 font-body">
-                The next round of SpellBlock will begin at 16:00 UTC daily!
-              </p>
-              
-              <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-6">
-                <div className="bg-background-darker p-4 rounded-lg">
-                  <div className="text-lg font-bold text-violet-bright mb-2">⏰ Daily Schedule</div>
-                  <div className="text-sm text-text-secondary">
-                    • Opens: 16:00 UTC<br/>
-                    • Commits close: 00:00 UTC<br/>
-                    • Reveals close: 04:00 UTC
-                  </div>
-                </div>
-                <div className="bg-background-darker p-4 rounded-lg">
-                  <div className="text-lg font-bold text-amber-bright mb-2">💰 Min stake</div>
-                  <div className="text-text-secondary text-sm">1,000,000 $CLAWDIA</div>
-                </div>
-              </div>
-
-              <p className="text-text-dim text-sm font-body">
-                Follow <a href="https://x.com/Clawdia772541" target="_blank" className="text-violet-glow hover:text-violet-bright">@Clawdia</a> for round announcements
-              </p>
+      <div className="max-w-[600px] mx-auto px-4 py-8">
+        <div className="bg-surface border border-border rounded-2xl p-8 text-center">
+          <h2 className="text-3xl font-display mb-4">🔮 Preparing next ritual</h2>
+          <p className="text-text-dim text-lg mb-6">
+            The next round of SpellBlock will begin at 16:00 UTC daily!
+          </p>
+          <div className="bg-surface-2 border border-border rounded-lg p-4 text-sm">
+            <div className="font-semibold mb-2">Daily schedule</div>
+            <div className="text-text-dim space-y-1">
+              <div>• Opens: 16:00 UTC</div>
+              <div>• Commits close: 00:00 UTC</div>
+              <div>• Reveals close: 04:00 UTC</div>
             </div>
           </div>
-          
-          {/* Sidebar with counters */}
-          <div className="space-y-6">
-            <BurnCounter />
-            <SeasonLeaderboard />
-          </div>
+        </div>
+        <div className="mt-6">
+          <BurnCounter />
         </div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-4">
-      {/* Round Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-2 text-amber-glow">
-          SpellBlock Round #{currentRoundId?.toString()}
-        </h1>
-        <div className="flex items-center justify-center gap-4 text-sm text-text-secondary">
-          <span>Phase: {RoundPhase[phase]}</span>
-          {roundData && (
-            <span>Started: {new Date(Number(roundData?.startTime) * 1000).toLocaleTimeString('en-US', { 
-              hour: '2-digit', 
-              minute: '2-digit', 
-              timeZone: 'UTC',
-              timeZoneName: 'short'
-            })}</span>
-          )}
-        </div>
-      </div>
+    <>
+      {/* Phase Banner */}
+      <PhaseBanner
+        phase={phase}
+        deadline={phase === RoundPhase.Commit ? Number(roundData?.commitDeadline) : Number(roundData?.revealDeadline)}
+        season={{ number: 3, day: 7 }}
+      />
 
-      <div className="grid lg:grid-cols-4 gap-6">
-        {/* Left Sidebar */}
-        <div className="lg:col-span-1 space-y-6">
-          <BurnCounter />
-          <SeasonLeaderboard />
-        </div>
+      {/* Main Content */}
+      <main className="max-w-[600px] mx-auto px-4 py-5">
+        {/* Pot Display */}
+        <PotDisplay
+          totalPot={roundData?.totalPot || 0n}
+          commitCount={Number(roundData?.commitCount || 0)}
+          season={{ number: 3, day: 7 }}
+        />
 
-        {/* Main Game Area */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Letter Pool */}
-          {letterPool && (
-            <div className="glass-panel p-6">
-              <h3 className="text-center text-text-dim text-sm mb-4 font-heading tracking-wide">
-                Today's letter pool
-              </h3>
-              <LetterPool 
-                letters={letterPool} 
-                selectedLetters="" 
-              />
-            </div>
-          )}
-
-          {/* Spell & Ruler Display */}
-          <div className="grid md:grid-cols-2 gap-4">
-            {/* Spell Display */}
-            <div className="glass-panel p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-lg">🪄</span>
-                <h3 className="font-heading font-bold text-violet-bright">Today's spell</h3>
-              </div>
-              {isSpellRevealed && spellName && spellDescription ? (
-                <div className="text-center">
-                  <div className="text-2xl font-display font-bold text-violet-glow mb-2">
-                    {spellName}
-                  </div>
-                  <div className="text-sm text-text-secondary">
-                    {spellDescription}
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center">
-                  <div className="text-2xl font-display font-bold text-text-dim mb-2">
-                    ???
-                  </div>
-                  <div className="text-sm text-text-secondary">
-                    Hidden until commit phase closes
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Ruler Display */}
-            <RulerDisplay 
-              validLengths={[5, 8, 11]} // Hardcoded for now until proper parsing
-              isRevealed={isSpellRevealed}
-            />
-          </div>
-
-          {/* Phase-specific content */}
-          {phase === RoundPhase.Commit && roundData && (
+        {/* Game Section */}
+        <div className="animate-fadeInUp">
+          {phase === RoundPhase.Commit && (
             <>
-              <Countdown 
-                deadline={Number(roundData?.commitDeadline)} 
-                label="Commit phase ends in" 
-              />
+              {/* Hidden constraints warning */}
+              <div className="flex gap-3 items-start p-4 mb-6 rounded-xl border" style={{
+                background: 'linear-gradient(135deg, rgba(124,58,237,0.06), rgba(124,58,237,0.12))',
+                borderColor: 'rgba(124,58,237,0.18)'
+              }}>
+                <div className="text-2xl flex-shrink-0 mt-0.5">🎭</div>
+                <div>
+                  <div className="font-semibold text-sm mb-1">Constraints hidden</div>
+                  <div className="text-xs text-text-dim leading-relaxed">
+                    A spell (Veto, Anchor, Seal, or Gem) and three valid word lengths will be revealed at midnight UTC. Hedge wisely.
+                  </div>
+                </div>
+              </div>
 
-              {hasCommitted ? (
-                <CommittedState 
-                  roundId={currentRoundId} 
-                  stake={commitment?.stake || BigInt(0)} 
+              {/* Letter Pool */}
+              <div className="mb-5">
+                <div className="flex items-baseline justify-between mb-2 mt-4">
+                  <h2 className="text-[19px] font-display tracking-tight">Letter pool</h2>
+                  <span className="text-[11px] font-mono text-text-dim">{letterPool.length} available</span>
+                </div>
+                <div className="bg-surface border border-border rounded-xl p-3.5 flex flex-wrap gap-1.5">
+                  {letterPool.split('').map((letter, i) => (
+                    <div
+                      key={i}
+                      className="letter-tile"
+                    >
+                      {letter}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Commit Form */}
+              {!hasCommitted && currentRoundId && (
+                <CommitForm
+                  roundId={currentRoundId}
+                  letterPool={letterPool}
+                  minStake={minStake}
+                  onCommitSuccess={() => {
+                    refetchCommitment()
+                    refetchRound()
+                  }}
                 />
-              ) : (
-                currentRoundId && (
-                  <CommitForm 
-                    roundId={currentRoundId}
-                    letterPool={letterPool}
-                    minStake={minStake}
-                    onCommitSuccess={() => {
-                      refetchCommitment()
-                      refetchRound()
-                    }}
-                  />
-                )
+              )}
+
+              {hasCommitted && (
+                <div className="flex gap-3 items-start p-4 rounded-xl border animate-fadeInUp mt-4" style={{
+                  background: 'linear-gradient(135deg, rgba(22,163,74,0.06), rgba(22,163,74,0.14))',
+                  borderColor: 'rgba(22,163,74,0.3)'
+                }}>
+                  <div className="w-8 h-8 rounded-full bg-green text-white flex items-center justify-center font-bold text-base flex-shrink-0">
+                    ✓
+                  </div>
+                  <div>
+                    <div className="font-bold text-base mb-1">Committed</div>
+                    <div className="text-xs text-text-dim leading-relaxed">
+                      Your word is locked with {((Number(commitment?.stake || 0n) / 1e18) / 1000000).toFixed(1)}M $CLAWDIA. Constraints reveal at midnight UTC.
+                    </div>
+                  </div>
+                </div>
               )}
             </>
           )}
 
-          {phase === RoundPhase.Reveal && roundData && (
+          {phase === RoundPhase.Reveal && (
             <>
-              {/* Double Reveal Moment - Both spell and ruler revealed */}
-              {isSpellRevealed && (
-                <div className="glass-panel p-6 bg-amber-900/20 border-amber-500/30">
-                  <div className="text-center mb-4">
-                    <h3 className="text-2xl font-bold text-amber-bright mb-2">🎭 The Reveal!</h3>
-                    <p className="text-text-secondary">Both spell and ruler lengths are now revealed</p>
+              {/* Revealed constraints */}
+              <div className="grid grid-cols-2 gap-2.5 mb-6">
+                {/* Spell */}
+                <div className="p-4 rounded-xl border" style={{
+                  borderColor: `${spell?.color}40`,
+                  background: `linear-gradient(160deg, ${spell?.color}06, ${spell?.color}14)`
+                }}>
+                  <div className="flex items-center gap-2 mb-2.5">
+                    <span className="text-2xl">{spell?.icon}</span>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-base font-bold" style={{ color: spell?.color }}>Spell</span>
+                      <span className="text-xs font-semibold text-text-dim">{spell?.name}</span>
+                    </div>
                   </div>
-                  <div className="grid md:grid-cols-2 gap-4 text-center">
-                    <div>
-                      <div className="text-lg font-bold text-violet-bright">Spell: {spellName}</div>
-                      <div className="text-sm text-text-secondary">{spellDescription}</div>
-                    </div>
-                    <div>
-                      <div className="text-lg font-bold text-amber-bright">Valid Lengths</div>
-                      <div className="text-2xl font-display font-bold text-amber-glow">
-                        {[5, 8, 11].join(' • ')}
-                      </div>
-                    </div>
+                  <div className="text-xs text-text-dim leading-relaxed">
+                    {spell?.desc}{' '}
+                    {spellId !== 3 && (
+                      <span className="inline-flex items-center justify-center w-6 h-6 rounded font-mono text-sm font-bold text-white align-middle ml-0.5" style={{ background: spell?.color }}>
+                        {spellLetter}
+                      </span>
+                    )}
                   </div>
                 </div>
-              )}
 
-              <Countdown 
-                deadline={Number(roundData?.revealDeadline)} 
-                label="Reveal phase ends in" 
-              />
+                {/* Ruler */}
+                <div className="p-4 rounded-xl border" style={{
+                  borderColor: '#D9770640',
+                  background: 'linear-gradient(160deg, #D9770606, #D9770614)'
+                }}>
+                  <div className="flex items-center gap-2 mb-2.5">
+                    <span className="text-2xl">📏</span>
+                    <span className="text-base font-bold text-gold">Ruler</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[5, 8, 11].map((len) => (
+                      <span
+                        key={len}
+                        className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded border"
+                        style={{
+                          background: '#D9770618',
+                          color: '#D97706',
+                          borderColor: '#D9770630'
+                        }}
+                      >
+                        {len} letters
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
 
-              {hasCommitted && !hasRevealed && currentRoundId ? (
+              {/* Reveal Form */}
+              {hasCommitted && currentRoundId && (
                 <RevealForm
                   roundId={currentRoundId}
                   spellId={spellId}
@@ -314,76 +410,16 @@ export function GameBoard() {
                     refetchRound()
                   }}
                 />
-              ) : hasRevealed ? (
-                <div className="glass-panel p-6 text-center bg-green-900/20 border-green-500/30">
-                  <p className="text-green-400 text-xl font-bold mb-2">✅ Word revealed!</p>
-                  <p className="text-text-secondary">
-                    Waiting for round to finalize...
-                  </p>
-                </div>
-              ) : (
-                <div className="glass-panel p-6 text-center bg-yellow-900/20 border-yellow-500/30">
-                  <p className="text-yellow-400">You didn't commit to this round</p>
-                </div>
               )}
             </>
           )}
-
-          {phase === RoundPhase.Finalized && roundData && (
-            <div className="glass-panel p-6 text-center">
-              <h2 className="text-2xl font-bold mb-4 text-amber-glow">🏆 Round Complete!</h2>
-              <p className="text-text-secondary mb-4">
-                Final pot: {(Number((roundData?.totalPot ?? 0n) + (roundData?.jackpotBonus ?? 0n)) / 1e18).toLocaleString()} $CLAWDIA
-              </p>
-              
-              {/* Share Result Button - only if user participated */}
-              {hasCommitted && (
-                <div className="mb-4">
-                  <ShareResultButton
-                    score={Math.floor(Math.random() * 100)} // TODO: Get actual score from contract
-                    roundNumber={Number(roundData?.roundId ?? 0)}
-                    className="mx-auto"
-                  />
-                </div>
-              )}
-              
-              <p className="text-text-dim text-sm">
-                Next round starts at 16:00 UTC tomorrow
-              </p>
-            </div>
-          )}
         </div>
 
-        {/* Right Sidebar */}
-        <div className="lg:col-span-1 space-y-6">
-          {/* Compact Pot Display */}
-          {roundData && (
-            <PotDisplay
-              totalPot={roundData?.totalPot}
-              commitCount={Number(roundData?.commitCount)}
-              jackpotBonus={roundData?.jackpotBonus ?? 0n}
-              rolloverAmount={rolloverAmount}
-              isHero={false}
-            />
-          )}
-
-          {/* Live Activity */}
-          {roundData && <ActivityFeed roundId={currentRoundId} />}
-          
-          {/* Player's streak info */}
-          {address && (
-            <div className="glass-panel p-4 text-center">
-              <div className="text-sm text-text-dim mb-2">Your streak</div>
-              <div className="text-2xl font-display font-bold text-amber-glow">
-                Coming soon
-              </div>
-              <div className="text-xs text-text-secondary">
-                Streak tracking via StreakTracker contract
-              </div>
-            </div>
-          )}
+        {/* Burn Counter */}
+        <div className="mt-5">
+          <BurnCounter />
         </div>
-      </div>
-    </div>
+      </main>
+    </>
   )
 }

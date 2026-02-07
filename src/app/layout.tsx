@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Plus_Jakarta_Sans } from 'next/font/google'
+import { Instrument_Serif, DM_Sans, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import dynamic from 'next/dynamic'
 
@@ -7,10 +7,23 @@ const Providers = dynamic(() => import('@/components/Providers').then(mod => mod
   ssr: false,
 })
 
-const plusJakartaSans = Plus_Jakarta_Sans({ 
+const instrumentSerif = Instrument_Serif({ 
   subsets: ['latin'], 
-  weight: ['300', '400', '500', '600', '700', '800'],
-  variable: '--font-main'
+  weight: ['400'],
+  style: ['normal', 'italic'],
+  variable: '--font-display'
+})
+
+const dmSans = DM_Sans({ 
+  subsets: ['latin'], 
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-body'
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-mono'
 })
 
 export const metadata: Metadata = {
@@ -44,7 +57,7 @@ export default function RootLayout({
           })}
         />
       </head>
-      <body className={`${plusJakartaSans.variable} font-main bg-void-deep text-text-primary`}>
+      <body className={`${instrumentSerif.variable} ${dmSans.variable} ${jetbrainsMono.variable} font-body bg-[var(--bg)] text-[var(--text)]`}>
         <Providers>
           {children}
         </Providers>

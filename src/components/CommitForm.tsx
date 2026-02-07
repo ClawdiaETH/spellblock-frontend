@@ -6,7 +6,7 @@ import { parseUnits, formatUnits, keccak256, encodePacked, toHex } from 'viem'
 import { base } from 'viem/chains'
 import { CONTRACTS, SPELLBLOCK_ABI, ERC20_ABI } from '@/config/contracts'
 import { useDictionary } from '@/hooks/useDictionary'
-import { ClawdiaSwapButton } from './ClawdiaSwapButton'
+import { getMerkleProof } from '@/utils/merkle'
 
 interface CommitFormProps {
   roundId: bigint
@@ -17,23 +17,22 @@ interface CommitFormProps {
 
 export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: CommitFormProps) {
   const [word, setWord] = useState('')
-  const [stake, setStake] = useState('')
+  const [stake, setStake] = useState('1000000')
   const [salt, setSalt] = useState('')
   const [error, setError] = useState('')
   const [step, setStep] = useState<'approve' | 'commit'>('approve')
+  const [usedIndices, setUsedIndices] = useState<Set<number>>(new Set())
   
   const { address, isConnected } = useAccount()
   const chainId = base.id
   const contracts = CONTRACTS[chainId]
-  const { validateWord: validateDictionaryWord, isLoading: isDictionaryLoading, error: dictionaryError } = useDictionary()
+  const { validateWord: validateDictionaryWord, isLoading: isDictionaryLoading } = useDictionary()
 
-  // Generate random salt on mount
   useEffect(() => {
     const randomBytes = crypto.getRandomValues(new Uint8Array(32))
     setSalt(toHex(randomBytes))
   }, [])
 
-  // Check allowance
   const { data: allowance } = useReadContract({
     address: contracts.clawdiaToken,
     abi: ERC20_ABI,
@@ -41,7 +40,6 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
     args: address ? [address, contracts.spellBlockGame] : undefined,
   })
 
-  // Token balance
   const { data: balance } = useReadContract({
     address: contracts.clawdiaToken,
     abi: ERC20_ABI,
@@ -49,15 +47,12 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
     args: address ? [address] : undefined,
   })
 
-  // Approve transaction
   const { writeContract: approve, data: approveHash, isPending: isApproving } = useWriteContract()
   const { isSuccess: approveSuccess } = useWaitForTransactionReceipt({ hash: approveHash })
 
-  // Commit transaction
   const { writeContract: commit, data: commitHash, isPending: isCommitting } = useWriteContract()
   const { isSuccess: commitSuccess } = useWaitForTransactionReceipt({ hash: commitHash })
 
-  // Update step based on allowance
   useEffect(() => {
     if (allowance && stake) {
       const stakeAmount = parseUnits(stake || '0', 18)
@@ -69,38 +64,71 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
     }
   }, [allowance, stake])
 
-  // Handle approve success
   useEffect(() => {
     if (approveSuccess) {
       setStep('commit')
     }
   }, [approveSuccess])
 
-  // Handle commit success
   useEffect(() => {
     if (commitSuccess && address) {
-      // Save commitment data to localStorage for reveal
-      const commitData = {
-        roundId: roundId.toString(),
-        word,
-        salt,
-        stake,
+      const saveCommitData = async () => {
+        try {
+          const merkleProof = await getMerkleProof(word)
+          const commitData = {
+            roundId: roundId.toString(),
+            word,
+            salt,
+            stake,
+            merkleProof,
+          }
+          localStorage.setItem(`spellblock-commit-${roundId}-${address}`, JSON.stringify(commitData))
+          onCommitSuccess?.()
+        } catch (error) {
+          console.error('Failed to generate merkle proof:', error)
+          const commitData = {
+            roundId: roundId.toString(),
+            word,
+            salt,
+            stake,
+            merkleProof: null,
+          }
+          localStorage.setItem(`spellblock-commit-${roundId}-${address}`, JSON.stringify(commitData))
+          onCommitSuccess?.()
+        }
       }
-      localStorage.setItem(`spellblock-commit-${roundId}-${address}`, JSON.stringify(commitData))
-      onCommitSuccess?.()
+      saveCommitData()
     }
   }, [commitSuccess, roundId, word, salt, stake, address, onCommitSuccess])
+
+  // Track used letter indices
+  useEffect(() => {
+    const indices = new Set<number>()
+    const poolArray = letterPool.split('').map((l, i) => ({ letter: l, index: i, used: false }))
+    for (const ch of word.toUpperCase()) {
+      const found = poolArray.find((p) => p.letter === ch && !p.used)
+      if (found) {
+        found.used = true
+        indices.add(found.index)
+      }
+    }
+    setUsedIndices(indices)
+  }, [word, letterPool])
+
+  const addLetter = (letter: string, idx: number) => {
+    if (usedIndices.has(idx)) return
+    setWord((w) => w + letter)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
-    if (!word) {
-      setError('Please enter a word')
+    if (!word || word.length < 3) {
+      setError('Word must be at least 3 letters')
       return
     }
 
-    // Use dictionary validation which includes all checks
     const wordError = validateDictionaryWord(word, letterPool)
     if (wordError) {
       setError(wordError)
@@ -126,7 +154,6 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
         args: [contracts.spellBlockGame, stakeAmount],
       })
     } else {
-      // Create commit hash: keccak256(roundId, player, word, salt)
       const commitHash = keccak256(
         encodePacked(
           ['uint256', 'address', 'string', 'bytes32'],
@@ -145,107 +172,157 @@ export function CommitForm({ roundId, letterPool, minStake, onCommitSuccess }: C
 
   if (!isConnected) {
     return (
-      <div className="bg-spell-dark/50 rounded-xl p-6 text-center">
-        <p className="text-gray-400">Connect your wallet to play</p>
+      <div className="bg-surface border border-border rounded-xl p-6 text-center">
+        <p className="text-text-dim">Connect your wallet to play</p>
       </div>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-spell-dark/50 rounded-xl p-6 space-y-4">
-      <h3 className="text-xl font-bold text-center mb-4">Submit your word</h3>
-      
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Letter Pool (interactive) */}
       <div>
-        <div className="flex justify-between items-center mb-1">
-          <label className="text-sm text-gray-400">Your word (4-12 letters)</label>
-          <span className={`text-sm font-mono ${
-            word.length === 0 ? 'text-gray-500' : 
-            word.length < 4 || word.length > 12 ? 'text-red-400' : 
-            'text-green-400'
-          }`}>
-            {word.length}/12
-          </span>
+        <div className="flex items-baseline justify-between mb-2 mt-4">
+          <h2 className="text-[19px] font-display tracking-tight">Letter pool</h2>
+          <span className="text-[11px] font-mono text-text-dim">{letterPool.length} available</span>
         </div>
-        <input
-          type="text"
-          value={word}
-          onChange={(e) => setWord(e.target.value.toLowerCase())}
-          placeholder="Enter your word..."
-          maxLength={12}
-          className="w-full bg-spell-darker border border-indigo-800 rounded-lg px-4 py-3 text-lg font-mono uppercase tracking-wider focus:outline-none focus:border-indigo-500"
-        />
+        <div className="bg-surface border border-border rounded-xl p-3.5 flex flex-wrap gap-1.5">
+          {letterPool.split('').map((letter, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => addLetter(letter, i)}
+              disabled={usedIndices.has(i)}
+              className="letter-tile transition-all"
+              style={{
+                opacity: usedIndices.has(i) ? 0.2 : 1,
+                transform: usedIndices.has(i) ? 'scale(0.88)' : 'scale(1)',
+                cursor: usedIndices.has(i) ? 'default' : 'pointer',
+              }}
+            >
+              {letter}
+            </button>
+          ))}
+        </div>
       </div>
 
+      {/* Word Builder */}
       <div>
-        <label className="block text-sm text-gray-400 mb-1">
-          Stake amount ($CLAWDIA)
-        </label>
-        <input
-          type="number"
-          value={stake}
-          onChange={(e) => setStake(e.target.value)}
-          placeholder={`Min: ${formatUnits(minStake, 18)}`}
-          className="w-full bg-spell-darker border border-indigo-800 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500"
-        />
+        <div className="flex items-baseline justify-between mb-2">
+          <h2 className="text-[19px] font-display tracking-tight">Your word</h2>
+          {word.length > 0 && <span className="text-[11.5px] font-mono text-accent font-medium">{word.length} letters</span>}
+        </div>
+        
+        <div className="bg-surface border border-border rounded-xl p-3.5">
+          {/* Word display */}
+          <div className="min-h-[52px] flex items-center justify-center gap-1.5 flex-wrap py-1.5 pb-2.5">
+            {word.length === 0 ? (
+              <span className="text-sm text-text-dim italic opacity-40">Tap letters or type below...</span>
+            ) : (
+              word.toUpperCase().split('').map((ch, i) => (
+                <span key={i} className="word-char animate-charPop">
+                  {ch}
+                </span>
+              ))
+            )}
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-1.5 justify-center mb-1.5">
+            <button
+              type="button"
+              onClick={() => setWord((w) => w.slice(0, -1))}
+              disabled={!word.length}
+              className="text-[11.5px] font-medium px-3 py-1 bg-surface-2 border border-border text-text-dim rounded hover:text-text disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              ← Back
+            </button>
+            <button
+              type="button"
+              onClick={() => setWord('')}
+              disabled={!word.length}
+              className="text-[11.5px] font-medium px-3 py-1 bg-surface-2 border border-border text-text-dim rounded hover:text-text disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Clear
+            </button>
+          </div>
+
+          {/* Text input */}
+          <input
+            type="text"
+            value={word}
+            onChange={(e) => setWord(e.target.value.toUpperCase().replace(/[^A-Z]/g, ''))}
+            placeholder="Or type directly..."
+            className="w-full py-2 px-3 bg-surface-2 border border-border rounded text-sm font-mono uppercase tracking-widest text-text placeholder:text-text-dim placeholder:opacity-50 focus:outline-none focus:border-accent"
+            maxLength={15}
+          />
+        </div>
+      </div>
+
+      {/* Stake Selection */}
+      <div>
+        <div className="flex items-baseline justify-between mb-2">
+          <h2 className="text-[19px] font-display tracking-tight">Stake</h2>
+        </div>
+        
+        <div className="flex flex-wrap gap-1.5 mb-2">
+          {[1000000, 5000000, 10000000, 25000000].map((amount) => (
+            <button
+              key={amount}
+              type="button"
+              onClick={() => setStake(String(amount))}
+              className="font-mono text-xs font-semibold px-3 py-1.5 rounded border transition-all"
+              style={{
+                background: Number(stake) === amount ? 'var(--accent)' : 'var(--surface)',
+                color: Number(stake) === amount ? '#fff' : 'var(--text)',
+                borderColor: Number(stake) === amount ? 'var(--accent)' : 'var(--border)',
+              }}
+            >
+              {amount >= 1000000 ? `${(amount / 1000000)}M` : amount}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 bg-surface border border-border rounded px-3">
+          <input
+            type="number"
+            value={stake}
+            onChange={(e) => setStake(e.target.value)}
+            className="flex-1 py-2 bg-transparent border-none text-text font-mono text-base font-semibold focus:outline-none"
+            min={1000000}
+            step={1000000}
+          />
+          <span className="text-[10.5px] text-text-dim font-semibold whitespace-nowrap">$CLAWDIA</span>
+        </div>
+
         {balance !== undefined && (
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-text-dim mt-1">
             Balance: {parseFloat(formatUnits(balance, 18)).toLocaleString()} $CLAWDIA
           </p>
         )}
-        {balance !== undefined && balance < minStake && (
-          <div className="mt-2 p-3 bg-red-900/30 border border-red-700 rounded-lg">
-            <p className="text-red-400 text-sm font-medium">
-              ⚠️ Insufficient $CLAWDIA
-            </p>
-            <p className="text-red-300 text-xs mt-1">
-              You need at least {parseFloat(formatUnits(minStake, 18)).toLocaleString()} $CLAWDIA to play.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-2 mt-2">
-              <ClawdiaSwapButton className="text-xs px-3 py-1.5" />
-              <a 
-                href="https://app.uniswap.org/swap?outputCurrency=0xbbd9aDe16525acb4B336b6dAd3b9762901522B07&chain=base"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block px-3 py-1.5 bg-violet-600 hover:bg-violet-500 rounded text-xs font-medium transition-colors text-center"
-              >
-                Buy on Uniswap →
-              </a>
-            </div>
-          </div>
-        )}
       </div>
 
-      {dictionaryError && (
-        <p className="text-red-400 text-sm">Dictionary error: {dictionaryError}</p>
-      )}
-
       {error && (
-        <p className="text-red-400 text-sm">{error}</p>
+        <p className="text-red text-sm">{error}</p>
       )}
 
-      {isDictionaryLoading && (
-        <p className="text-yellow-400 text-sm">📚 Loading dictionary...</p>
-      )}
-
+      {/* Commit Button */}
       <button
         type="submit"
-        disabled={isApproving || isCommitting || isDictionaryLoading || !!dictionaryError}
-        className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 py-3 rounded-lg font-bold transition-all"
+        disabled={isApproving || isCommitting || isDictionaryLoading || word.length < 3}
+        className="btn-commit"
+        style={{
+          opacity: word.length < 3 || isApproving || isCommitting || isDictionaryLoading ? 0.4 : 1,
+          cursor: word.length < 3 || isApproving || isCommitting || isDictionaryLoading ? 'not-allowed' : 'pointer'
+        }}
       >
-        {isDictionaryLoading ? (
-          'Loading dictionary...'
-        ) : isApproving || isCommitting ? (
-          'Processing...'
-        ) : step === 'approve' ? (
-          'Approve $CLAWDIA'
-        ) : (
-          'Submit commitment'
-        )}
+        <span>
+          {isDictionaryLoading ? 'Loading...' : isApproving || isCommitting ? 'Processing...' : step === 'approve' ? 'Approve $CLAWDIA' : 'Commit word'}
+        </span>
+        <span className="text-[11.5px] font-normal opacity-70">
+          Stake {Number(stake) >= 1000000 ? `${(Number(stake) / 1000000)}M` : stake} $CLAWDIA · Word hidden until reveal
+        </span>
       </button>
-
-      <p className="text-xs text-gray-500 text-center">
-        ⚠️ Save your word! You'll need it to reveal after commits close.
-      </p>
     </form>
   )
 }

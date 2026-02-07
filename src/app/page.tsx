@@ -1,25 +1,23 @@
 'use client'
 
+import { useState } from 'react'
 import dynamicImport from 'next/dynamic'
 import { useFarcasterMiniApp } from '@/contexts/FarcasterMiniAppContext'
 
-// Dynamically import components that need wagmi context
 const WalletButton = dynamicImport(() => import('@/components/WalletButton').then(mod => mod.WalletButton), {
   ssr: false,
-  loading: () => <button className="px-4 py-2 bg-violet-600/50 rounded-lg text-white/50 font-medium animate-pulse">Connect Wallet</button>
+  loading: () => (
+    <button className="px-4 py-2 bg-accent/50 rounded-lg text-white/50 font-medium animate-pulse">
+      Connect Wallet
+    </button>
+  )
 })
 
 const GameBoard = dynamicImport(() => import('@/components/GameBoard').then(mod => mod.GameBoard), {
   ssr: false,
-  loading: () => <div className="animate-pulse bg-spell-dark/50 rounded-xl h-96" />
+  loading: () => <div className="animate-pulse bg-surface-2 rounded-xl h-96 max-w-[600px] mx-auto" />
 })
 
-const ConnectPlayButton = dynamicImport(() => import('@/components/ConnectPlayButton').then(mod => mod.ConnectPlayButton), {
-  ssr: false,
-  loading: () => <button className="arcane-button text-xl px-8 py-4 mb-4 opacity-50">Connect wallet & play now</button>
-})
-
-// Auto-connect component for mini app - dynamically imported to ensure WagmiProvider is ready
 const FarcasterAutoConnect = dynamicImport(
   () => import('@/components/FarcasterAutoConnect').then(mod => mod.FarcasterAutoConnect),
   { ssr: false }
@@ -27,488 +25,215 @@ const FarcasterAutoConnect = dynamicImport(
 
 export default function Home() {
   const { isInMiniApp } = useFarcasterMiniApp()
-
-  // Generate floating particles
-  const particles = Array.from({ length: 12 }, (_, i) => (
-    <div
-      key={i}
-      className="particle"
-      style={{
-        left: `${Math.random() * 100}%`,
-        animationDelay: `${Math.random() * 8}s`,
-        animationDuration: `${15 + Math.random() * 10}s`
-      }}
-    />
-  ))
+  const [showRules, setShowRules] = useState(false)
+  const [showActivity, setShowActivity] = useState(false)
 
   return (
     <>
       {/* Auto-connect wallet in mini app */}
       <FarcasterAutoConnect />
-      
-      {/* Floating Particles */}
-      <div className="particles">
-        {particles}
-      </div>
 
-      <main className="min-h-screen relative z-10">
-        {/* Mystical Header */}
-        <header className="glass-panel border-b-0 rounded-none sticky top-0 z-50">
-          <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <span className="text-4xl" role="img" aria-label="Crystal Ball">🔮</span>
+      <div className="min-h-screen bg-bg">
+        {/* Header */}
+        <header className="bg-surface border-b border-border sticky top-0 z-50">
+          <div className="max-w-6xl mx-auto px-4 py-3.5 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl" role="img" aria-label="Crystal Ball">🔮</span>
               <div>
-                <h1 className="text-2xl font-display font-bold text-amber-glow">
+                <h1 className="text-[22px] font-display font-normal tracking-tight text-text leading-tight">
                   SpellBlock
                 </h1>
-                <p className="text-xs text-text-dim font-heading">by Clawdia</p>
+                <p className="text-[11px] text-text-dim font-body">by Clawdia</p>
               </div>
             </div>
             
-            {/* Wallet Connect */}
-            <div className="relative">
+            {/* Right side actions */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowRules(true)}
+                className="w-[34px] h-[34px] border border-border rounded-lg flex items-center justify-center text-text-dim hover:text-text hover:border-accent transition-colors"
+                title="How to play"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </button>
+              
+              <button
+                onClick={() => setShowActivity(!showActivity)}
+                className="relative w-[34px] h-[34px] border border-border rounded-lg flex items-center justify-center text-text-dim hover:text-text hover:border-accent transition-colors"
+                title="Activity"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+                <span className="absolute top-[5px] right-[5px] w-[6px] h-[6px] bg-green rounded-full pulse-animation" />
+              </button>
+              
               <WalletButton />
             </div>
           </div>
         </header>
 
-        {/* Hero Section - Enchanted Tagline */}
-        <section className="max-w-6xl mx-auto px-4 py-16 text-center relative">
-          <h2 className="text-6xl md:text-7xl font-display font-black mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-amber-glow via-violet-bright to-amber-glow bg-clip-text text-transparent bg-[length:200%_100%] animate-[shimmer_3s_ease-in-out_infinite]">
-              Commit. Reveal. Win.
-            </span>
-          </h2>
-          <p className="text-xl md:text-2xl text-text-secondary mb-4 font-heading">
-            The strategic word game where <strong>skill meets stakes</strong>.
-          </p>
-          <p className="text-lg text-text-dim font-body max-w-2xl mx-auto mb-8">
-            Choose your word, stake your $CLAWDIA, and survive both the spell and ruler constraints. 
-            <strong className="text-violet-bright">Daily rounds at 16:00 UTC!</strong>
-          </p>
-          
-                  </section>
-
-        {/* THE CORE MECHANIC - Two Hidden Constraints */}
-        <section className="max-w-4xl mx-auto px-4 py-12 mb-8">
-          <div className="glass-panel p-8 border-2 border-amber-glow/30">
-            <h3 className="text-3xl font-display font-bold text-center mb-6 text-amber-glow">
-              ⚠️ The challenge: two hidden constraints
-            </h3>
-            <p className="text-center text-lg text-text-secondary mb-8">
-              Every round, your word must survive <strong className="text-violet-bright">BOTH</strong> hidden constraints to win the main prize:
-            </p>
-            
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
-              {/* Clawdia's Ruler */}
-              <div className="bg-violet-glow/10 p-6 rounded-xl border border-violet-bright/30">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-3xl">📏</span>
-                  <h4 className="text-xl font-heading font-bold text-violet-bright">Clawdia's Ruler</h4>
-                </div>
-                <p className="text-text-secondary mb-3">
-                  Each round, Clawdia picks <strong>3 valid word lengths</strong> (between 4-12 letters). Your word must match ONE of them.
-                </p>
-                <div className="bg-background-darker p-3 rounded-lg text-sm font-mono">
-                  <div className="text-amber-glow mb-2">Example: Ruler = 5, 8, 11</div>
-                  <div className="text-green-400">✓ "STORM" (5 letters) - valid</div>
-                  <div className="text-green-400">✓ "BALANCED" (8 letters) - valid</div>
-                  <div className="text-red-400">✗ "CAT" (3 letters) - wrong length</div>
-                </div>
-              </div>
-
-              {/* The Spell */}
-              <div className="bg-amber-glow/10 p-6 rounded-xl border border-amber-bright/30">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-3xl">🪄</span>
-                  <h4 className="text-xl font-heading font-bold text-amber-bright">The spell</h4>
-                </div>
-                <p className="text-text-secondary mb-3">
-                  One of <strong>4 spell types</strong> is active each round. Your word must satisfy the spell's rule.
-                </p>
-                <div className="bg-background-darker p-3 rounded-lg text-sm font-mono">
-                  <div className="text-amber-glow mb-2">The 4 spells:</div>
-                  <div>🚫 <strong>Veto</strong> - must NOT contain [letter]</div>
-                  <div>⚓ <strong>Anchor</strong> - must START with [letter]</div>
-                  <div>🔖 <strong>Seal</strong> - must END with [letter]</div>
-                  <div>💎 <strong>Gem</strong> - must have double letters (LL, TT)</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="text-center bg-red-900/20 p-4 rounded-lg border border-red-500/30">
-              <p className="text-lg font-bold text-red-400 mb-2">
-                ⚠️ Both are HIDDEN until commits close!
-              </p>
-              <p className="text-text-secondary text-sm">
-                You must hedge your word choice to survive unknown constraints. That's the skill.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Main Game Board */}
-        <section id="game" className="max-w-7xl mx-auto px-4 py-8">
+        {/* Main Content */}
+        <main>
           <GameBoard />
-        </section>
+        </main>
 
-        {/* How to Play - Complete Game Loop */}
-        <section className="max-w-6xl mx-auto px-4 py-20">
-          <h3 className="text-4xl font-display font-bold text-center mb-4 text-amber-glow">
-            How to play SpellBlock
-          </h3>
-          <p className="text-center text-text-secondary font-body mb-16 max-w-3xl mx-auto text-lg">
-            A daily strategic word game where you stake $CLAWDIA on your word-crafting skills. <strong>Each round runs for 24 hours!</strong>
-          </p>
-
-          {/* Daily Game Flow */}
-          <div className="grid md:grid-cols-3 gap-8 relative mb-20">
-            {/* Connecting Line */}
-            <div className="hidden md:block absolute top-20 left-1/2 transform -translate-x-1/2 w-2/3 h-0.5 bg-gradient-to-r from-transparent via-violet-glow to-transparent opacity-30"></div>
-
-            {/* Commit Phase: 16 hours */}
-            <div className="glass-panel p-8 text-center hover:scale-105 transition-all duration-300">
-              <div className="relative mb-6">
-                <div className="w-16 h-16 mx-auto bg-gradient-to-br from-violet-dim to-violet-glow rounded-full flex items-center justify-center border-2 border-violet-bright shadow-lg">
-                  <span className="text-sm font-display font-bold text-white">16:00</span>
-                </div>
+        {/* Rules Modal */}
+        {showRules && (
+          <div 
+            className="fixed inset-0 bg-black/25 z-[100] flex items-center justify-center p-4"
+            onClick={() => setShowRules(false)}
+          >
+            <div 
+              className="bg-surface border border-border rounded-2xl max-w-lg w-full max-h-[85vh] overflow-auto shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-6 py-[18px] border-b border-border">
+                <h2 className="text-[22px] font-display font-normal">How to play</h2>
+                <button
+                  onClick={() => setShowRules(false)}
+                  className="w-[30px] h-[30px] border border-border rounded-lg flex items-center justify-center text-text-dim hover:text-text text-sm"
+                >
+                  ✕
+                </button>
               </div>
               
-              <h4 className="text-xl font-heading font-bold mb-3 text-violet-bright">
-                Commit phase (16 hours)
-              </h4>
-              <ul className="text-text-secondary font-body text-sm leading-relaxed text-left space-y-2">
-                <li>• Round opens at 16:00 UTC daily</li>
-                <li>• See letter pool, spell & ruler are hidden</li>
-                <li>• Form word, stake min 1M $CLAWDIA</li>
-                <li>• Submit hidden commitment hash</li>
-                <li>• Watch pot grow with live tracker</li>
-              </ul>
-            </div>
-
-            {/* Reveal Phase Start: 08:00 */}
-            <div className="glass-panel p-8 text-center hover:scale-105 transition-all duration-300">
-              <div className="relative mb-6">
-                <div className="w-16 h-16 mx-auto bg-gradient-to-br from-amber-dim to-amber-glow rounded-full flex items-center justify-center border-2 border-amber-bright shadow-lg">
-                  <span className="text-sm font-display font-bold text-white">08:00</span>
-                </div>
-              </div>
-              
-              <h4 className="text-xl font-heading font-bold mb-3 text-amber-bright">
-                Reveal phase begins
-              </h4>
-              <ul className="text-text-secondary font-body text-sm leading-relaxed text-left space-y-2">
-                <li>• Commits close at 08:00 UTC</li>
-                <li>• Spell revealed simultaneously</li>
-                <li>• Clawdia's 3 ruler lengths revealed</li>
-                <li>• Check if your word survives both!</li>
-                <li>• Dramatic reveal builds tension</li>
-              </ul>
-            </div>
-
-            {/* Reveal Phase: 8 hours */}
-            <div className="glass-panel p-8 text-center hover:scale-105 transition-all duration-300">
-              <div className="relative mb-6">
-                <div className="w-16 h-16 mx-auto bg-gradient-to-br from-arcane-teal to-violet-glow rounded-full flex items-center justify-center border-2 border-violet-bright shadow-lg">
-                  <span className="text-sm font-display font-bold text-white">16:00</span>
-                </div>
-              </div>
-              
-              <h4 className="text-xl font-heading font-bold mb-3 text-violet-bright">
-                Reveal & finalize (8 hours)
-              </h4>
-              <ul className="text-text-secondary font-body text-sm leading-relaxed text-left space-y-2">
-                <li>• Players reveal actual words + salt</li>
-                <li>• Live leaderboard updates</li>
-                <li>• Scoring: 1pt/letter × streak bonus</li>
-                <li>• Round ends at 16:00 UTC</li>
-                <li>• Winners paid, next round starts</li>
-              </ul>
-            </div>
-          </div>
-
-          {/* What You Can Win */}
-          <div className="glass-panel p-8 mb-16 text-center">
-            <h4 className="text-2xl font-heading font-bold mb-4 text-amber-bright">
-              💰 What you can win
-            </h4>
-            
-            {/* Pot distribution breakdown */}
-            <div className="bg-background-darker p-4 rounded-lg mb-6 max-w-md mx-auto">
-              <div className="text-sm font-mono text-text-secondary space-y-1">
-                <div>Total pot → <span className="text-red-400">3% treasury</span> (1% burn, 1% stakers, 1% ops)</div>
-                <div>Remaining 97% → <span className="text-green-400">90% winners</span> + <span className="text-amber-glow">10% consolation</span></div>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6 text-sm">
-              <div>
-                <div className="text-violet-glow font-bold text-lg mb-2">Winners pool (~87%)</div>
-                <p className="text-text-secondary">Pass both constraints?<br/>Split 90% of remaining pot by score</p>
-              </div>
-              <div>
-                <div className="text-violet-glow font-bold text-lg mb-2">Streak bonuses</div>
-                <p className="text-text-secondary">3+ wins: ×1.10 | 7+ wins: ×1.25<br/>14+ wins: ×1.50 multiplier!</p>
-              </div>
-              <div>
-                <div className="text-violet-glow font-bold text-lg mb-2">Consolation (~10%)</div>
-                <p className="text-text-secondary">Pass spell but miss ruler?<br/>Share consolation (capped at stake)</p>
-              </div>
-            </div>
-          </div>
-
-          {/* The 4 Spell Types */}
-          <div className="mb-16">
-            <h4 className="text-2xl font-heading font-bold text-center mb-8 text-amber-bright">
-              🪄 The four spell types
-            </h4>
-            <p className="text-center text-text-secondary font-body mb-8 max-w-2xl mx-auto">
-              Each round brings a different spell constraint. Only words that pass both the spell and length requirements win!
-            </p>
-            
-            <div className="grid lg:grid-cols-2 gap-6">
-              {/* Veto Spell */}
-              <div className="glass-panel p-6 hover:scale-105 transition-all duration-300">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-2xl">🚫</span>
-                  <h5 className="text-xl font-heading font-bold text-red-400">Veto</h5>
-                </div>
-                <p className="text-text-secondary mb-3 font-body">
-                  <strong>Word must NOT contain [letter]</strong>
-                </p>
-                <div className="bg-background-darker p-3 rounded-lg text-sm font-mono">
-                  <div className="text-amber-glow mb-2">Veto: E</div>
-                  <div className="text-green-400">✓ "STORM" works (no E anywhere)</div>
-                  <div className="text-red-400">✗ "TREE" fails (contains E)</div>
-                </div>
-              </div>
-
-              {/* Anchor Spell */}
-              <div className="glass-panel p-6 hover:scale-105 transition-all duration-300">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-2xl">⚓</span>
-                  <h5 className="text-xl font-heading font-bold text-blue-400">Anchor</h5>
-                </div>
-                <p className="text-text-secondary mb-3 font-body">
-                  <strong>Word must START with [letter]</strong>
-                </p>
-                <div className="bg-background-darker p-3 rounded-lg text-sm font-mono">
-                  <div className="text-amber-glow mb-2">Anchor: S</div>
-                  <div className="text-green-400">✓ "STORM" works (starts with S)</div>
-                  <div className="text-red-400">✗ "METAL" fails (starts with M)</div>
-                </div>
-              </div>
-
-              {/* Seal Spell */}
-              <div className="glass-panel p-6 hover:scale-105 transition-all duration-300">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-2xl">🔖</span>
-                  <h5 className="text-xl font-heading font-bold text-purple-400">Seal</h5>
-                </div>
-                <p className="text-text-secondary mb-3 font-body">
-                  <strong>Word must END with [letter]</strong>
-                </p>
-                <div className="bg-background-darker p-3 rounded-lg text-sm font-mono">
-                  <div className="text-amber-glow mb-2">Seal: R</div>
-                  <div className="text-green-400">✓ "MOTOR" works (ends with R)</div>
-                  <div className="text-red-400">✗ "STORM" fails (ends with M, not R)</div>
-                </div>
-              </div>
-
-              {/* Gem Spell */}
-              <div className="glass-panel p-6 hover:scale-105 transition-all duration-300">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-2xl">💎</span>
-                  <h5 className="text-xl font-heading font-bold text-cyan-400">Gem</h5>
-                </div>
-                <p className="text-text-secondary mb-3 font-body">
-                  <strong>Word must have adjacent identical letters</strong>
-                </p>
-                <div className="bg-background-darker p-3 rounded-lg text-sm font-mono">
-                  <div className="text-amber-glow mb-2">Gem: Active</div>
-                  <div className="text-green-400">✓ "LETTER" works (has TT)</div>
-                  <div className="text-red-400">✗ "STORM" fails (no adjacent doubles)</div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="text-center mt-8">
-              <div className="glass-panel p-4 max-w-2xl mx-auto">
-                <p className="text-text-secondary text-sm">
-                  <strong>Remember:</strong> Your word must pass BOTH the spell constraint AND match one of Clawdia's 3 hidden ruler lengths to win the main prize. Words that pass the spell but miss the length go to consolation pool (capped at stake return).
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Example Winning Scenario */}
-          <div className="glass-panel p-8 max-w-4xl mx-auto mt-16">
-            <h4 className="text-2xl font-heading font-bold text-center mb-6 text-amber-bright">
-              🏆 Example: Turn 2M into 8M
-            </h4>
-            
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <div className="text-center">
-                  <div className="text-lg font-bold text-violet-bright mb-2">Today's Round</div>
-                  <div className="bg-background-darker p-4 rounded-lg font-mono text-sm space-y-2">
-                    <div>📝 Letter pool: <span className="text-amber-glow">A,D,E,I,O,R,S,T</span></div>
-                    <div>🪄 Spell: <span className="text-violet-bright">??? (hidden)</span></div>
-                    <div>📏 Ruler: <span className="text-amber-bright">??? (hidden)</span></div>
-                    <div>💰 Total pot: <span className="text-green-400">20M $CLAWDIA</span></div>
-                    <div>👥 Players: <span className="text-text-secondary">10 committed</span></div>
+              <div className="px-[22px] py-[18px] pb-6 space-y-[18px]">
+                {[
+                  {
+                    n: '1',
+                    title: 'Craft your word',
+                    desc: 'Each round reveals a pool of letters. Build a word using only those letters — you\'re betting it survives hidden constraints.'
+                  },
+                  {
+                    n: '2',
+                    title: 'Stake & commit',
+                    desc: 'Stake $CLAWDIA tokens. Your word is hashed onchain — nobody sees it, and you can\'t change it.'
+                  },
+                  {
+                    n: '3',
+                    title: 'The double reveal',
+                    desc: 'At midnight UTC, two hidden constraints appear:'
+                  },
+                  {
+                    n: '4',
+                    title: 'Reveal & settle',
+                    desc: 'Reveal your word. If it passes both spell and ruler, you win a share of the pot. If not, your stake burns forever.'
+                  }
+                ].map((step) => (
+                  <div key={step.n} className="flex gap-3">
+                    <div className="flex-shrink-0 w-[26px] h-[26px] rounded-full bg-accent text-white flex items-center justify-center font-mono text-[13px] font-bold">
+                      {step.n}
+                    </div>
+                    <div>
+                      <div className="font-bold text-sm mb-1">{step.title}</div>
+                      <div className="text-[12.5px] text-text-dim leading-relaxed">{step.desc}</div>
+                      {step.n === '3' && (
+                        <div className="mt-2 space-y-1 text-[12.5px]">
+                          <div className="flex items-center gap-1.5 py-0.5">
+                            <span>🚫</span>
+                            <strong>Veto:</strong>
+                            <span className="opacity-70">Must NOT contain [letter]</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 py-0.5">
+                            <span>⚓</span>
+                            <strong>Anchor:</strong>
+                            <span className="opacity-70">Must START with [letter]</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 py-0.5">
+                            <span>🔒</span>
+                            <strong>Seal:</strong>
+                            <span className="opacity-70">Must END with [letter]</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 py-0.5">
+                            <span>💎</span>
+                            <strong>Gem:</strong>
+                            <span className="opacity-70">Must have double letters</span>
+                          </div>
+                          <div className="text-text-dim mt-2">
+                            Plus the <strong>Ruler</strong> — three valid word lengths your word must match.
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="text-center">
-                  <div className="text-lg font-bold text-violet-bright mb-2">Your Play</div>
-                  <div className="bg-background-darker p-4 rounded-lg font-mono text-sm space-y-2">
-                    <div>🎯 Your word: <span className="text-amber-glow">"ASTEROID"</span></div>
-                    <div>💎 Your stake: <span className="text-text-secondary">2M $CLAWDIA</span></div>
-                    <div>📊 Base score: <span className="text-text-secondary">8 points</span></div>
-                    <div>🔥 Your streak: <span className="text-violet-bright">5 days (×1.10)</span></div>
-                    <div>🏆 Final score: <span className="text-green-400">8.8 points</span></div>
+                ))}
+
+                <div className="bg-surface-2 border border-border rounded-lg px-[14px] py-3 mt-1">
+                  <div className="font-semibold text-[12.5px] mb-1.5">Daily schedule (UTC)</div>
+                  <div className="space-y-0.5 text-[12.5px] text-text-dim leading-relaxed">
+                    <div className="py-0.5">
+                      <span className="font-mono font-semibold text-text mr-1.5">16:00</span>
+                      Round opens · Letters revealed
+                    </div>
+                    <div className="py-0.5">
+                      <span className="font-mono font-semibold text-text mr-1.5">00:00</span>
+                      Commits close · Spell + Ruler revealed
+                    </div>
+                    <div className="py-0.5">
+                      <span className="font-mono font-semibold text-text mr-1.5">04:00</span>
+                      Reveals close · Winners paid · Burns executed
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-
-            <div className="text-center mt-6 p-4 bg-violet-900/20 rounded-lg border border-violet-500/30">
-              <div className="text-lg font-bold text-violet-bright mb-2">⚡ Reveal moment: Spell = Seal D, Ruler = 5, 8, 11</div>
-              <p className="text-text-secondary text-sm">
-                "ASTEROID" ends with D (passes Seal) and is 8 letters (matches ruler). You're in!
-              </p>
-            </div>
-            
-            <div className="text-center mt-4 p-4 bg-green-900/20 rounded-lg border border-green-500/30">
-              <div className="text-2xl font-bold text-green-400 mb-2">Result: You win ~8M $CLAWDIA!</div>
-              <p className="text-text-secondary text-sm">
-                20M pot → 3% treasury (0.6M) → 19.4M remains (97%)<br/>
-                Winners get 90% of 19.4M = 17.5M | You're top scorer among 3 winners!
-              </p>
-            </div>
-            
-            <div className="text-center mt-4">
-              <p className="text-text-dim text-sm italic">
-                4x return in one round. Skill + conviction = rewards.
-              </p>
-            </div>
           </div>
+        )}
 
-          {/* Simple Scoring Guide */}
-          <div className="glass-panel p-6 mt-12">
-            <h4 className="text-xl font-heading font-bold text-center mb-4 text-violet-bright">
-              📊 Quick scoring guide
-            </h4>
-            <p className="text-center text-text-secondary text-sm mb-4">
-              Words must be <strong className="text-amber-glow">4-12 letters</strong> (minimum 4 to submit)
-            </p>
-            <div className="grid md:grid-cols-4 gap-4 text-center text-sm">
-              <div>
-                <div className="font-mono text-amber-glow mb-1">"ROAD" = 4 pts</div>
-                <div className="text-text-dim">Minimum length</div>
-              </div>
-              <div>
-                <div className="font-mono text-amber-glow mb-1">"STORM" = 5 pts</div>
-                <div className="text-text-dim">1 point per letter</div>
-              </div>
-              <div>
-                <div className="font-mono text-amber-glow mb-1">"ASTEROID" = 8 pts</div>
-                <div className="text-text-dim">Longer words win</div>
-              </div>
-              <div>
-                <div className="font-mono text-violet-bright mb-1">+ streak ×1.10-1.50</div>
-                <div className="text-text-dim">Win streaks multiply</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Ready to Play CTA */}
-        <section className="max-w-4xl mx-auto px-4 py-16 text-center">
-          <div className="glass-panel p-12">
-            <h3 className="text-4xl font-display font-bold mb-4 text-amber-glow">
-              Ready to cast your first spell?
-            </h3>
-            <p className="text-xl text-text-secondary mb-8 font-heading">
-              Join hundreds of word wizards earning $CLAWDIA daily
-            </p>
-            
-            <div className="grid md:grid-cols-2 gap-6 mb-8 max-w-2xl mx-auto">
-              <div className="bg-background-darker p-4 rounded-lg">
-                <div className="text-2xl font-bold text-violet-bright mb-2">⏰ Next round starts</div>
-                <div className="text-lg text-text-secondary">In 4 hours 23 minutes</div>
-              </div>
-              <div className="bg-background-darker p-4 rounded-lg">
-                <div className="text-2xl font-bold text-amber-bright mb-2">💰 Min stake</div>
-                <div className="text-lg text-text-secondary">1,000,000 $CLAWDIA</div>
-              </div>
-            </div>
-
-            <ConnectPlayButton />
-            
-            <p className="text-text-dim text-sm">
-              Connect your wallet above to join the next round. No $CLAWDIA? 
-              <a href="https://swap.defillama.com/?chain=base&from=0x0000000000000000000000000000000000000000&tab=swap&to=0xbbd9aDe16525acb4B336b6dAd3b9762901522B07" target="_blank" rel="noopener noreferrer" className="text-violet-glow hover:text-violet-bright ml-1">Get some here →</a>
-            </p>
-          </div>
-        </section>
-
-        {/* Mystical Footer */}
-        <footer className="glass-panel border-t-0 rounded-none mt-20">
-          <div className="max-w-6xl mx-auto px-4 py-8">
-            <div className="text-center space-y-4">
-              <p className="text-text-secondary font-body">
-                Forged with 🐚 by{' '}
-                <a 
-                  href="https://x.com/ClawdBotAI" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-amber-glow hover:text-amber-bright transition-colors font-heading"
+        {/* Activity Panel */}
+        {showActivity && (
+          <div 
+            className="fixed inset-0 bg-black/25 z-[100] flex justify-end"
+            onClick={() => setShowActivity(false)}
+          >
+            <div 
+              className="bg-surface border-l border-border w-[320px] max-w-[88vw] h-full flex flex-col animate-fadeInUp"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-[18px] py-[14px] border-b border-border">
+                <h3 className="text-lg font-display font-normal">Live activity</h3>
+                <button
+                  onClick={() => setShowActivity(false)}
+                  className="w-[30px] h-[30px] border border-border rounded-lg flex items-center justify-center text-text-dim hover:text-text text-sm"
                 >
-                  Clawdia
-                </a>
-                {' '}on the Base realm
-              </p>
-              
-              <div className="flex justify-center space-x-6 text-sm">
-                <a 
-                  href="https://basescan.org/token/0xbbd9aDe16525acb4B336b6dAd3b9762901522B07" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-violet-glow hover:text-violet-bright transition-colors font-body"
-                >
-                  📜 $CLAWDIA Token
-                </a>
-                <a 
-                  href="https://x.com/ClawdBotAI" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-violet-glow hover:text-violet-bright transition-colors font-body"
-                >
-                  🐚 Follow updates
-                </a>
-                <a 
-                  href="https://github.com/ClawdiaETH/spellblock-frontend" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-violet-glow hover:text-violet-bright transition-colors font-body"
-                >
-                  💻 View source
-                </a>
+                  ✕
+                </button>
               </div>
               
-              <div className="pt-4 border-t border-violet-glow/20">
-                <p className="text-text-dim text-xs">
-                  Play responsibly. Only stake what you can afford to lose. SpellBlock is a game of skill with monetary stakes.
-                </p>
+              <div className="flex-1 overflow-auto">
+                <div className="divide-y divide-border">
+                  {[
+                    { addr: '0x1a2b...3c4d', stake: 5000000, time: '2m ago' },
+                    { addr: '0x5e6f...7g8h', stake: 12000000, time: '4m ago' },
+                    { addr: '0x9i0j...1k2l', stake: 1000000, time: '7m ago' },
+                    { addr: '0x3m4n...5o6p', stake: 25000000, time: '11m ago' },
+                    { addr: '0x7q8r...9s0t', stake: 3000000, time: '15m ago' },
+                  ].map((activity, i) => (
+                    <div key={i} className="flex items-center justify-between px-[18px] py-2.5">
+                      <span className="font-mono text-xs text-text-dim">{activity.addr}</span>
+                      <div className="text-right">
+                        <div className="font-mono text-[12.5px] font-semibold text-gold">
+                          {activity.stake >= 1000000 ? `${(activity.stake / 1000000).toFixed(1)}M` : activity.stake}
+                        </div>
+                        <div className="text-[10.5px] text-text-dim">{activity.time}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="px-[18px] py-2.5 border-t border-border text-center text-[10.5px] text-text-dim italic">
+                Words hidden until reveal phase
               </div>
             </div>
           </div>
-        </footer>
-      </main>
+        )}
+      </div>
     </>
   )
 }

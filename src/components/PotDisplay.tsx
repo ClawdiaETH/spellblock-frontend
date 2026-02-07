@@ -1,135 +1,101 @@
 'use client'
 
 import { formatUnits } from 'viem'
-import { useState, useEffect } from 'react'
 
 interface PotDisplayProps {
   totalPot: bigint
   commitCount: number
-  jackpotBonus: bigint
-  rolloverAmount?: bigint
-  isHero?: boolean
-  jackpotThreshold?: bigint
+  season?: { number: number; day: number }
+  minStake?: bigint
 }
 
 export function PotDisplay({ 
   totalPot, 
-  commitCount, 
-  jackpotBonus, 
-  rolloverAmount = BigInt(0),
-  isHero = false,
-  jackpotThreshold = BigInt('500000000000000000000000') // 500K $CLAWDIA
+  commitCount,
+  season = { number: 3, day: 7 },
+  minStake = BigInt('1000000000000000000000000') // 1M $CLAWDIA
 }: PotDisplayProps) {
-  const [previousPot, setPreviousPot] = useState(totalPot)
-  const [isAnimating, setIsAnimating] = useState(false)
-
-  // Animate when pot changes
-  useEffect(() => {
-    if (totalPot !== previousPot) {
-      setIsAnimating(true)
-      const timeout = setTimeout(() => setIsAnimating(false), 1000)
-      setPreviousPot(totalPot)
-      return () => clearTimeout(timeout)
-    }
-  }, [totalPot, previousPot])
-
   const formatPot = (amount: bigint) => {
     const formatted = parseFloat(formatUnits(amount, 18))
-    if (formatted >= 1000000) {
-      return { value: (formatted / 1000000).toFixed(2), suffix: 'M' }
-    } else if (formatted >= 1000) {
-      return { value: (formatted / 1000).toFixed(1), suffix: 'K' }
+    if (formatted >= 1_000_000_000) {
+      return (formatted / 1_000_000_000).toFixed(2) + 'B'
     }
-    return { value: formatted.toLocaleString(undefined, { maximumFractionDigits: 0 }), suffix: '' }
+    if (formatted >= 1_000_000) {
+      return (formatted / 1_000_000).toFixed(1) + 'M'
+    }
+    if (formatted >= 1_000) {
+      return (formatted / 1_000).toFixed(0) + 'K'
+    }
+    return formatted.toLocaleString(undefined, { maximumFractionDigits: 0 })
   }
 
-  const totalAmount = totalPot + jackpotBonus + rolloverAmount
-  const formatted = formatPot(totalAmount)
-  const isJackpotActive = totalAmount >= jackpotThreshold
+  const formatMinStake = (amount: bigint) => {
+    const formatted = parseFloat(formatUnits(amount, 18))
+    if (formatted >= 1_000_000) {
+      return (formatted / 1_000_000).toFixed(0) + 'M'
+    }
+    return formatted.toLocaleString()
+  }
 
-  if (isHero) {
-    return (
-      <div className="text-center">
-        {/* HERO Pot Display */}
-        <div className={`relative ${isAnimating ? 'animate-pulse' : ''}`}>
-          <div className="status-orb w-48 h-48 md:w-56 md:h-56 flex flex-col items-center justify-center text-center">
-            <div className="runic-ring"></div>
-            <div className="runic-ring"></div>
-            
-            <div className="relative z-10">
-              <div className="text-sm text-text-dim font-heading tracking-wide mb-2">
-                Live Pot
-              </div>
-              
-              <div className={`text-3xl md:text-4xl font-display font-bold mb-1 ${
-                isJackpotActive ? 'text-amber-glow animate-pulse' : 'text-violet-glow'
-              }`}>
-                {formatted.value}{formatted.suffix && <span className="text-xl md:text-2xl">{formatted.suffix}</span>}
-              </div>
-              
-              <div className="text-lg font-heading text-text-secondary mb-4">
-                $CLAWDIA
-              </div>
-              
-              <div className="flex items-center justify-center gap-4 text-sm">
-                <span className="text-text-dim">👥 {commitCount}</span>
-                {isJackpotActive && (
-                  <span className="text-amber-bright animate-pulse font-bold">
-                    🎰 JACKPOT!
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
+  return (
+    <div
+      className="rounded-[14px] border p-6 pb-3.5 mb-5 text-center"
+      style={{
+        background: 'linear-gradient(145deg, var(--surface) 0%, var(--surface-2) 100%)',
+        borderColor: 'var(--border)',
+      }}
+    >
+      {/* Pot amount */}
+      <div className="mb-3.5">
+        <div className="text-[11px] font-semibold uppercase tracking-widest mb-0.5" style={{ color: 'var(--text-dim)' }}>
+          Round pot
+        </div>
+        <div 
+          className="font-mono text-[40px] font-bold tracking-tight leading-none"
+          style={{ color: 'var(--gold)' }}
+        >
+          {formatPot(totalPot)}
+        </div>
+        <div className="text-[12px] font-medium mt-0.5" style={{ color: 'var(--text-dim)' }}>
+          $CLAWDIA
+        </div>
+      </div>
+
+      {/* Meta row */}
+      <div 
+        className="flex justify-center items-center gap-3.5 pt-2.5 border-t"
+        style={{ borderColor: 'var(--border)' }}
+      >
+        <div className="flex flex-col items-center gap-0.5">
+          <span className="text-[9.5px] uppercase tracking-wider" style={{ color: 'var(--text-dim)' }}>
+            Commits
+          </span>
+          <span className="font-mono text-[13px] font-semibold">
+            {commitCount}
+          </span>
         </div>
 
-        {/* Pot Breakdown */}
-        {(jackpotBonus > 0n || rolloverAmount > 0n) && (
-          <div className="glass-panel p-4 mt-4 text-sm">
-            <div className="text-text-dim mb-2">Pot breakdown:</div>
-            <div className="space-y-1">
-              <div className="flex justify-between">
-                <span>Player stakes:</span>
-                <span>{formatPot(totalPot).value}{formatPot(totalPot).suffix} $CLAWDIA</span>
-              </div>
-              {jackpotBonus > 0n && (
-                <div className="flex justify-between text-amber-bright">
-                  <span>Jackpot bonus:</span>
-                  <span>+{formatPot(jackpotBonus).value}{formatPot(jackpotBonus).suffix} $CLAWDIA</span>
-                </div>
-              )}
-              {rolloverAmount > 0n && (
-                <div className="flex justify-between text-violet-bright">
-                  <span>Previous rollover:</span>
-                  <span>+{formatPot(rolloverAmount).value}{formatPot(rolloverAmount).suffix} $CLAWDIA</span>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    )
-  }
+        <div className="w-px h-6" style={{ background: 'var(--border)' }} />
 
-  // Compact version for sidebar
-  return (
-    <div className={`glass-panel p-4 text-center ${isAnimating ? 'animate-pulse' : ''}`}>
-      <div className="text-sm text-text-dim font-heading tracking-wide mb-2">
-        Current pot
-      </div>
-      <div className={`text-3xl font-display font-bold mb-2 ${
-        isJackpotActive ? 'text-amber-glow' : 'text-violet-glow'
-      }`}>
-        {formatted.value}{formatted.suffix && <span className="text-xl">{formatted.suffix}</span>}
-      </div>
-      <div className="text-sm font-heading text-text-secondary mb-3">
-        $CLAWDIA
-      </div>
-      <div className="flex items-center justify-center gap-3 text-sm text-text-dim">
-        <span>👥 {commitCount}</span>
-        {isJackpotActive && (
-          <span className="text-amber-bright animate-pulse">🎰</span>
-        )}
+        <div className="flex flex-col items-center gap-0.5">
+          <span className="text-[9.5px] uppercase tracking-wider" style={{ color: 'var(--text-dim)' }}>
+            Season
+          </span>
+          <span className="font-mono text-[13px] font-semibold">
+            S{season.number} · D{season.day}
+          </span>
+        </div>
+
+        <div className="w-px h-6" style={{ background: 'var(--border)' }} />
+
+        <div className="flex flex-col items-center gap-0.5">
+          <span className="text-[9.5px] uppercase tracking-wider" style={{ color: 'var(--text-dim)' }}>
+            Min stake
+          </span>
+          <span className="font-mono text-[13px] font-semibold">
+            {formatMinStake(minStake)}
+          </span>
+        </div>
       </div>
     </div>
   )
