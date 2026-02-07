@@ -49,7 +49,9 @@ export default function Home() {
                 <h1 className="text-[22px] font-display font-normal tracking-tight text-text leading-tight">
                   SpellBlock
                 </h1>
-                <p className="text-[11px] text-text-dim font-body">by Clawdia</p>
+                <p className="text-[11px] text-text-dim font-body">
+                  by <a href="https://x.com/ClawdiaBotAI" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">Clawdia</a>
+                </p>
               </div>
               <RoundBadge />
             </div>
@@ -291,12 +293,14 @@ export default function Home() {
                       <span className="font-mono">1 point per letter</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-text-dim">Win streak bonus</span>
+                      <span className="text-text-dim">Play streak bonus</span>
                       <span className="font-mono">×1.10 - ×1.50</span>
                     </div>
                   </div>
-                  <div className="mt-2 text-xs text-text-dim">
-                    Winners split pool proportionally by final score
+                  <div className="mt-2 text-xs text-text-dim space-y-1">
+                    <div>Streak bonus: 3 days (×1.10), 7 days (×1.25), 14 days (×1.50)</div>
+                    <div>Keep your streak by revealing a word each day — win or lose</div>
+                    <div className="pt-1">Winners split pool proportionally by final score</div>
                   </div>
                 </div>
 
