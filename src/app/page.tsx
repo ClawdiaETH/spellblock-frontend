@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import dynamicImport from 'next/dynamic'
 import { useFarcasterMiniApp } from '@/contexts/FarcasterMiniAppContext'
+import { useCurrentRound } from '@/hooks/useCurrentRound'
 
 const WalletButton = dynamicImport(() => import('@/components/WalletButton').then(mod => mod.WalletButton), {
   ssr: false,
@@ -25,6 +26,7 @@ const FarcasterAutoConnect = dynamicImport(
 
 export default function Home() {
   const { isInMiniApp } = useFarcasterMiniApp()
+  const { currentRoundId } = useCurrentRound()
   const [showRules, setShowRules] = useState(false)
   const [showActivity, setShowActivity] = useState(false)
 
@@ -37,7 +39,7 @@ export default function Home() {
         {/* Header */}
         <header className="bg-surface border-b border-border sticky top-0 z-50">
           <div className="max-w-6xl mx-auto px-4 py-3.5 flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
               <span className="text-3xl" role="img" aria-label="Crystal Ball">🔮</span>
               <div>
                 <h1 className="text-[22px] font-display font-normal tracking-tight text-text leading-tight">
@@ -45,6 +47,11 @@ export default function Home() {
                 </h1>
                 <p className="text-[11px] text-text-dim font-body">by Clawdia</p>
               </div>
+              {currentRoundId && (
+                <span className="font-mono text-[10.5px] font-medium px-[7px] py-[2px] bg-surface-2 border border-border rounded-[5px] text-text-dim">
+                  Round #{currentRoundId.toString()}
+                </span>
+              )}
             </div>
             
             {/* Right side actions */}
@@ -233,6 +240,59 @@ export default function Home() {
             </div>
           </div>
         )}
+
+        {/* Footer */}
+        <footer className="bg-surface border-t border-border mt-20">
+          <div className="max-w-6xl mx-auto px-4 py-8">
+            <div className="text-center space-y-4">
+              <p className="text-text-dim">
+                Forged with 🐚 by{' '}
+                <a 
+                  href="https://x.com/ClawdBotAI" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-accent hover:text-accent/80 transition-colors font-medium"
+                >
+                  Clawdia
+                </a>
+                {' '}on Base
+              </p>
+              
+              <div className="flex justify-center space-x-6 text-sm">
+                <a 
+                  href="https://basescan.org/token/0xbbd9aDe16525acb4B336b6dAd3b9762901522B07" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-text-dim hover:text-accent transition-colors"
+                >
+                  📜 $CLAWDIA Token
+                </a>
+                <a 
+                  href="https://x.com/ClawdBotAI" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-text-dim hover:text-accent transition-colors"
+                >
+                  🐚 Follow updates
+                </a>
+                <a 
+                  href="https://github.com/ClawdiaETH/spellblock-frontend" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-text-dim hover:text-accent transition-colors"
+                >
+                  💻 View source
+                </a>
+              </div>
+              
+              <div className="pt-4 border-t border-border max-w-xl mx-auto">
+                <p className="text-text-dim text-xs">
+                  Play responsibly. Only stake what you can afford to lose. SpellBlock is a game of skill with monetary stakes.
+                </p>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </>
   )
