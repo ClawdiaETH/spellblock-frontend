@@ -79,17 +79,6 @@ export function PotDisplay({
 
         <div className="flex flex-col items-center gap-0.5">
           <span className="text-[9.5px] uppercase tracking-wider" style={{ color: 'var(--text-dim)' }}>
-            Season
-          </span>
-          <span className="font-mono text-[13px] font-semibold">
-            S{season.number} · D{season.day}
-          </span>
-        </div>
-
-        <div className="w-px h-6" style={{ background: 'var(--border)' }} />
-
-        <div className="flex flex-col items-center gap-0.5">
-          <span className="text-[9.5px] uppercase tracking-wider" style={{ color: 'var(--text-dim)' }}>
             Min stake
           </span>
           <span className="font-mono text-[13px] font-semibold">

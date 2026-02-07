@@ -32,6 +32,7 @@ export default function Home() {
   const { isInMiniApp } = useFarcasterMiniApp()
   const [showRules, setShowRules] = useState(false)
   const [showActivity, setShowActivity] = useState(false)
+  const [showTokenomics, setShowTokenomics] = useState(false)
 
   return (
     <>
@@ -69,13 +70,23 @@ export default function Home() {
               
               <button
                 onClick={() => setShowActivity(!showActivity)}
-                className="relative w-[38px] h-[38px] border border-border rounded-lg flex items-center justify-center text-text-dim hover:text-text hover:border-accent transition-colors"
-                title="Activity"
+                className="w-[38px] h-[38px] border border-border rounded-lg flex items-center justify-center text-text-dim hover:text-text hover:border-accent transition-colors"
+                title="Recent commits"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
                 </svg>
-                <span className="absolute top-[5px] right-[5px] w-[6px] h-[6px] bg-green rounded-full pulse-animation" />
+              </button>
+
+              <button
+                onClick={() => setShowTokenomics(true)}
+                className="w-[38px] h-[38px] border border-border rounded-lg flex items-center justify-center text-text-dim hover:text-text hover:border-accent transition-colors"
+                title="Tokenomics"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
+                  <path d="M22 12A10 10 0 0 0 12 2v10z"/>
+                </svg>
               </button>
               
               <WalletButton />
@@ -202,7 +213,7 @@ export default function Home() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between px-[18px] py-[14px] border-b border-border">
-                <h3 className="text-lg font-display font-normal">Live activity</h3>
+                <h3 className="text-lg font-display font-normal">Recent commits</h3>
                 <button
                   onClick={() => setShowActivity(false)}
                   className="w-[30px] h-[30px] border border-border rounded-lg flex items-center justify-center text-text-dim hover:text-text text-sm"
@@ -235,6 +246,90 @@ export default function Home() {
               
               <div className="px-[18px] py-2.5 border-t border-border text-center text-[10.5px] text-text-dim italic">
                 Words hidden until reveal phase
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tokenomics Modal */}
+        {showTokenomics && (
+          <div 
+            className="fixed inset-0 bg-black/25 z-[100] flex items-center justify-center p-4"
+            onClick={() => setShowTokenomics(false)}
+          >
+            <div 
+              className="bg-surface border border-border rounded-2xl max-w-lg w-full max-h-[85vh] overflow-auto shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-6 py-[18px] border-b border-border">
+                <h2 className="text-[22px] font-display font-normal">Tokenomics</h2>
+                <button
+                  onClick={() => setShowTokenomics(false)}
+                  className="w-[30px] h-[30px] border border-border rounded-lg flex items-center justify-center text-text-dim hover:text-text text-sm"
+                >
+                  ✕
+                </button>
+              </div>
+              
+              <div className="px-[22px] py-[18px] pb-6 space-y-5">
+                {/* Pool Distribution */}
+                <div>
+                  <h3 className="font-bold text-sm mb-3">Pool distribution</h3>
+                  <div className="bg-surface-2 border border-border rounded-lg p-4 space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-text-dim">Treasury fee</span>
+                      <span className="font-mono font-semibold">3%</span>
+                    </div>
+                    <div className="ml-4 space-y-1 text-xs text-text-dim">
+                      <div>→ 1% burn (forever)</div>
+                      <div>→ 1% staker rewards</div>
+                      <div>→ 1% operations</div>
+                    </div>
+                    <div className="border-t border-border pt-2 mt-2">
+                      <div className="flex justify-between">
+                        <span className="text-text-dim">Player pool</span>
+                        <span className="font-mono font-semibold">97%</span>
+                      </div>
+                    </div>
+                    <div className="ml-4 space-y-1 text-xs text-text-dim">
+                      <div>→ 90% winners (spell + ruler)</div>
+                      <div>→ 10% consolation (spell only)</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Scoring */}
+                <div>
+                  <h3 className="font-bold text-sm mb-3">Scoring</h3>
+                  <div className="bg-surface-2 border border-border rounded-lg p-4 space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-text-dim">Base score</span>
+                      <span className="font-mono">1 point per letter</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-text-dim">Win streak bonus</span>
+                      <span className="font-mono">×1.10 - ×1.50</span>
+                    </div>
+                  </div>
+                  <div className="mt-2 text-xs text-text-dim">
+                    Winners split pool proportionally by final score
+                  </div>
+                </div>
+
+                {/* Min Stake & Burn */}
+                <div>
+                  <h3 className="font-bold text-sm mb-3">Requirements</h3>
+                  <div className="bg-surface-2 border border-border rounded-lg p-4 space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-text-dim">Minimum stake</span>
+                      <span className="font-mono font-semibold">1M $CLAWDIA</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-text-dim">Failed words</span>
+                      <span className="font-mono text-red">Burned forever</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
