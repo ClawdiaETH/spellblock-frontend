@@ -58,7 +58,7 @@ export default function Home() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowRules(true)}
-                className="w-[38px] h-[38px] border border-border rounded-lg flex items-center justify-center text-text hover:text-accent hover:border-accent transition-colors font-bold text-lg"
+                className="w-[38px] h-[38px] border border-border rounded-lg flex items-center justify-center text-text-dim hover:text-text hover:border-accent transition-colors font-bold text-lg"
                 title="How to play"
               >
                 ?
