@@ -83,7 +83,7 @@ export function PhaseBanner({ phase, phaseEnd }: PhaseBannerProps) {
         </div>
       </div>
 
-      {/* Phase progress track */}
+      {/* Phase progress track - 16hr commit (2x width) + 8hr reveal (1x width) */}
       <div className="flex items-center">
         <PhaseStep 
           label="Open" 
@@ -92,7 +92,7 @@ export function PhaseBanner({ phase, phaseEnd }: PhaseBannerProps) {
           color="#2B6CB0" 
         />
         <div
-          className="flex-1 h-0.5 rounded -mt-[18px]"
+          className="flex-[2] h-0.5 rounded -mt-[18px]"
           style={{ background: isCommit ? 'var(--border)' : '#2B6CB0' }}
         />
         <PhaseStep 

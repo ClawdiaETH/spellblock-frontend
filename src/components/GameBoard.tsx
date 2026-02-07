@@ -73,7 +73,7 @@ function PhaseBanner({ phase, deadline, season }: { phase: RoundPhase; deadline:
                 }}
               />
               <span className="text-lg font-semibold">
-                {isCommit ? 'Commit Phase' : 'Reveal Phase'}
+                {isCommit ? 'Commit phase' : 'Reveal phase'}
               </span>
             </div>
             <div className="text-sm text-text-dim max-w-md">
@@ -92,7 +92,7 @@ function PhaseBanner({ phase, deadline, season }: { phase: RoundPhase; deadline:
         {/* Phase track */}
         <div className="flex items-center">
           <PhaseStep label="Open" time="16:00" active={phase >= RoundPhase.Commit} color={phase >= RoundPhase.Commit ? '#2B6CB0' : '#D8D5CC'} />
-          <div className="flex-1 h-0.5 mx-1" style={{ background: phase >= RoundPhase.Reveal ? '#2B6CB0' : '#D8D5CC' }} />
+          <div className="flex-[2] h-0.5 mx-1" style={{ background: phase >= RoundPhase.Reveal ? '#2B6CB0' : '#D8D5CC' }} />
           <PhaseStep label="Reveal" time="08:00" active={phase >= RoundPhase.Reveal} color={phase >= RoundPhase.Reveal ? '#7C3AED' : '#D8D5CC'} />
           <div className="flex-1 h-0.5 mx-1" style={{ background: phase >= RoundPhase.Finalized ? '#7C3AED' : '#D8D5CC' }} />
           <PhaseStep label="Settle" time="16:00" active={phase >= RoundPhase.Finalized} color={phase >= RoundPhase.Finalized ? '#16A34A' : '#D8D5CC'} />
