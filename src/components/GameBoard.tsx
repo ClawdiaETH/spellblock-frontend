@@ -147,13 +147,6 @@ function PotDisplay({ totalPot, commitCount, season }: { totalPot: bigint; commi
         </div>
         <div className="w-px h-6 bg-border" />
         <div className="flex flex-col gap-0.5">
-          <span className="text-[9.5px] text-text-dim uppercase tracking-wider">Season</span>
-          <span className="font-mono text-sm font-semibold">
-            {season ? `S${season.number}·D${season.day}` : '-'}
-          </span>
-        </div>
-        <div className="w-px h-6 bg-border" />
-        <div className="flex flex-col gap-0.5">
           <span className="text-[9.5px] text-text-dim uppercase tracking-wider">Min stake</span>
           <span className="font-mono text-sm font-semibold">1M</span>
         </div>

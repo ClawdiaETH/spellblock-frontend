@@ -58,14 +58,10 @@ export default function Home() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowRules(true)}
-                className="w-[38px] h-[38px] border border-border rounded-lg flex items-center justify-center text-text-dim hover:text-text hover:border-accent transition-colors"
+                className="w-[38px] h-[38px] border border-border rounded-lg flex items-center justify-center text-text hover:text-accent hover:border-accent transition-colors font-bold text-lg"
                 title="How to play"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
-                  <line x1="12" y1="17" x2="12.01" y2="17"/>
-                </svg>
+                ?
               </button>
               
               <button
@@ -222,25 +218,13 @@ export default function Home() {
                 </button>
               </div>
               
-              <div className="flex-1 overflow-auto">
-                <div className="divide-y divide-border">
-                  {[
-                    { addr: '0x1a2b...3c4d', stake: 5000000, time: '2m ago' },
-                    { addr: '0x5e6f...7g8h', stake: 12000000, time: '4m ago' },
-                    { addr: '0x9i0j...1k2l', stake: 1000000, time: '7m ago' },
-                    { addr: '0x3m4n...5o6p', stake: 25000000, time: '11m ago' },
-                    { addr: '0x7q8r...9s0t', stake: 3000000, time: '15m ago' },
-                  ].map((activity, i) => (
-                    <div key={i} className="flex items-center justify-between px-[18px] py-2.5">
-                      <span className="font-mono text-xs text-text-dim">{activity.addr}</span>
-                      <div className="text-right">
-                        <div className="font-mono text-[12.5px] font-semibold text-gold">
-                          {activity.stake >= 1000000 ? `${(activity.stake / 1000000).toFixed(1)}M` : activity.stake}
-                        </div>
-                        <div className="text-[10.5px] text-text-dim">{activity.time}</div>
-                      </div>
-                    </div>
-                  ))}
+              <div className="flex-1 overflow-auto flex items-center justify-center">
+                <div className="text-center py-12 px-6">
+                  <div className="text-4xl mb-3">🔮</div>
+                  <div className="text-sm font-semibold mb-2">Coming soon</div>
+                  <div className="text-xs text-text-dim">
+                    Recent commit activity will appear here
+                  </div>
                 </div>
               </div>
               
