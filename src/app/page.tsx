@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import dynamicImport from 'next/dynamic'
 import { useFarcasterMiniApp } from '@/contexts/FarcasterMiniAppContext'
-import { useCurrentRound } from '@/hooks/useCurrentRound'
 
 const WalletButton = dynamicImport(() => import('@/components/WalletButton').then(mod => mod.WalletButton), {
   ssr: false,
@@ -19,6 +18,11 @@ const GameBoard = dynamicImport(() => import('@/components/GameBoard').then(mod 
   loading: () => <div className="animate-pulse bg-surface-2 rounded-xl h-96 max-w-[600px] mx-auto" />
 })
 
+const RoundBadge = dynamicImport(() => import('@/components/RoundBadge').then(mod => mod.RoundBadge), {
+  ssr: false,
+  loading: () => null
+})
+
 const FarcasterAutoConnect = dynamicImport(
   () => import('@/components/FarcasterAutoConnect').then(mod => mod.FarcasterAutoConnect),
   { ssr: false }
@@ -26,7 +30,6 @@ const FarcasterAutoConnect = dynamicImport(
 
 export default function Home() {
   const { isInMiniApp } = useFarcasterMiniApp()
-  const { currentRoundId } = useCurrentRound()
   const [showRules, setShowRules] = useState(false)
   const [showActivity, setShowActivity] = useState(false)
 
@@ -47,11 +50,7 @@ export default function Home() {
                 </h1>
                 <p className="text-[11px] text-text-dim font-body">by Clawdia</p>
               </div>
-              {currentRoundId && (
-                <span className="font-mono text-[10.5px] font-medium px-[7px] py-[2px] bg-surface-2 border border-border rounded-[5px] text-text-dim">
-                  Round #{currentRoundId.toString()}
-                </span>
-              )}
+              <RoundBadge />
             </div>
             
             {/* Right side actions */}
