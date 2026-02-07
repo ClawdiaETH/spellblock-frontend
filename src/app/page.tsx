@@ -57,10 +57,10 @@ export default function Home() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowRules(true)}
-                className="w-[34px] h-[34px] border border-border rounded-lg flex items-center justify-center text-text-dim hover:text-text hover:border-accent transition-colors"
+                className="w-[34px] h-[34px] border border-border rounded-lg flex items-center justify-center text-text hover:bg-surface-2 hover:border-accent transition-colors"
                 title="How to play"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <circle cx="12" cy="12" r="10"/>
                   <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
                   <line x1="12" y1="17" x2="12.01" y2="17"/>
@@ -69,10 +69,10 @@ export default function Home() {
               
               <button
                 onClick={() => setShowActivity(!showActivity)}
-                className="relative w-[34px] h-[34px] border border-border rounded-lg flex items-center justify-center text-text-dim hover:text-text hover:border-accent transition-colors"
+                className="relative w-[34px] h-[34px] border border-border rounded-lg flex items-center justify-center text-text hover:bg-surface-2 hover:border-accent transition-colors"
                 title="Activity"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
                 </svg>
                 <span className="absolute top-[5px] right-[5px] w-[6px] h-[6px] bg-green rounded-full pulse-animation" />
@@ -177,11 +177,11 @@ export default function Home() {
                       Round opens · Letters revealed
                     </div>
                     <div className="py-0.5">
-                      <span className="font-mono font-semibold text-text mr-1.5">00:00</span>
+                      <span className="font-mono font-semibold text-text mr-1.5">08:00</span>
                       Commits close · Spell + Ruler revealed
                     </div>
                     <div className="py-0.5">
-                      <span className="font-mono font-semibold text-text mr-1.5">04:00</span>
+                      <span className="font-mono font-semibold text-text mr-1.5">16:00</span>
                       Reveals close · Winners paid · Burns executed
                     </div>
                   </div>
