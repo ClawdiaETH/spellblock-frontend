@@ -87,7 +87,8 @@ export function PhaseBanner({ phase, phaseEnd }: PhaseBannerProps) {
       <div className="flex items-center">
         <PhaseStep 
           label="Open" 
-          time="16:00" 
+          time="16:00 UTC" 
+          timeET="11:00 ET"
           active={true} 
           color="#2B6CB0" 
         />
@@ -97,7 +98,8 @@ export function PhaseBanner({ phase, phaseEnd }: PhaseBannerProps) {
         />
         <PhaseStep 
           label="Reveal" 
-          time="08:00" 
+          time="08:00 UTC" 
+          timeET="03:00 ET"
           active={!isCommit} 
           color={isCommit ? 'var(--border)' : '#7C3AED'} 
         />
@@ -107,7 +109,8 @@ export function PhaseBanner({ phase, phaseEnd }: PhaseBannerProps) {
         />
         <PhaseStep 
           label="Settle" 
-          time="15:45" 
+          time="15:45 UTC" 
+          timeET="10:45 ET"
           active={false} 
           color="var(--border)" 
         />
@@ -119,11 +122,12 @@ export function PhaseBanner({ phase, phaseEnd }: PhaseBannerProps) {
 interface PhaseStepProps {
   label: string
   time: string
+  timeET: string
   active: boolean
   color: string
 }
 
-function PhaseStep({ label, time, active, color }: PhaseStepProps) {
+function PhaseStep({ label, time, timeET, active, color }: PhaseStepProps) {
   return (
     <div className="flex flex-col items-center gap-0.5 min-w-[48px]">
       <div
@@ -142,6 +146,9 @@ function PhaseStep({ label, time, active, color }: PhaseStepProps) {
       </span>
       <span className="text-[9.5px] font-mono opacity-50" style={{ color: 'var(--text-dim)' }}>
         {time}
+      </span>
+      <span className="text-[8.5px] font-mono opacity-40" style={{ color: 'var(--text-dim)' }}>
+        {timeET}
       </span>
     </div>
   )

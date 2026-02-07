@@ -179,18 +179,18 @@ export default function Home() {
                 ))}
 
                 <div className="bg-surface-2 border border-border rounded-lg px-[14px] py-3 mt-1">
-                  <div className="font-semibold text-[12.5px] mb-1.5">Daily schedule (UTC)</div>
+                  <div className="font-semibold text-[12.5px] mb-1.5">Daily schedule</div>
                   <div className="space-y-0.5 text-[12.5px] text-text-dim leading-relaxed">
                     <div className="py-0.5">
-                      <span className="font-mono font-semibold text-text mr-1.5">16:00</span>
+                      <span className="font-mono font-semibold text-text mr-1.5">16:00 UTC / 11:00 ET</span>
                       Round opens · Letters revealed
                     </div>
                     <div className="py-0.5">
-                      <span className="font-mono font-semibold text-text mr-1.5">08:00</span>
+                      <span className="font-mono font-semibold text-text mr-1.5">08:00 UTC / 03:00 ET</span>
                       Commits close · Spell + Ruler revealed
                     </div>
                     <div className="py-0.5">
-                      <span className="font-mono font-semibold text-text mr-1.5">15:45</span>
+                      <span className="font-mono font-semibold text-text mr-1.5">15:45 UTC / 10:45 ET</span>
                       Reveals close · Winners paid · Burns executed
                     </div>
                   </div>

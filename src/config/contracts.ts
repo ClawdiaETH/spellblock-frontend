@@ -2,15 +2,15 @@ import { base } from 'viem/chains'
 
 export const CONTRACTS = {
   [base.id]: {
-    spellBlockCore: '0x4b8bf9004Ba309EB0169a97821D0eD993AF37961' as const, // SpellBlockGame mainnet 2026-02-04
-    spellBlockGame: '0x4b8bf9004Ba309EB0169a97821D0eD993AF37961' as const, // Alias for spellBlockCore
-    spellBlockTreasury: '0x26B1999085A4F11DC923804f7B39993d21D8bBc7' as const, // StakerRewardDistributor
-    spellBlockScoring: '0x8DC86F87d96e7227CBb955d5fF716F427EBa496f' as const, // SpellRegistry
+    spellBlockCore: '0x451523CB691d694C9711dF0f4FC12E9e3ff293ca' as const, // SpellBlockGame mainnet 2026-02-06 (16h commit + 7h45m reveal)
+    spellBlockGame: '0x451523CB691d694C9711dF0f4FC12E9e3ff293ca' as const, // Alias for spellBlockCore
+    spellBlockTreasury: '0x85BC4DB5C7556cBD01E85353387D1fF76Ddc6657' as const, // StakerRewardDistributor
+    spellBlockScoring: '0xaaeA646379888Ba63aB81a2584027B88B6A83240' as const, // SpellRegistry
     clawdiaToken: '0xbbd9aDe16525acb4B336b6dAd3b9762901522B07' as const,
-    dictionaryVerifier: '0xC7626E8f33e90540664C5717c7aEAe636D5f2Fb4' as const, // DictionaryVerifier
+    dictionaryVerifier: '0x44FC68604Bb407fFeB139c5c27829268238e730E' as const, // DictionaryVerifier
     streakTracker: '0x0000000000000000000000000000000000000000' as const, // Embedded in game
     seasonAccumulator: '0x0000000000000000000000000000000000000000' as const, // TBD
-    spellEngine: '0x5bE28ab70A71c63825E53a9956ccBD916E556C5C' as const, // SpellEngine
+    spellEngine: '0xa97FF2D2CD07aE47073cb8a79235224B79cb1da5' as const, // SpellEngine
   },
 }
 
