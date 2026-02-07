@@ -97,7 +97,7 @@ export function PhaseBanner({ phase, phaseEnd }: PhaseBannerProps) {
         />
         <PhaseStep 
           label="Reveal" 
-          time="00:00" 
+          time="08:00" 
           active={!isCommit} 
           color={isCommit ? 'var(--border)' : '#7C3AED'} 
         />
@@ -107,7 +107,7 @@ export function PhaseBanner({ phase, phaseEnd }: PhaseBannerProps) {
         />
         <PhaseStep 
           label="Settle" 
-          time="04:00" 
+          time="16:00" 
           active={false} 
           color="var(--border)" 
         />
