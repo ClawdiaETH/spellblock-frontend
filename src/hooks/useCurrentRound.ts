@@ -4,7 +4,7 @@ import { CONTRACTS, SPELLBLOCK_CORE_ABI } from '@/config/contracts'
 
 export function useCurrentRound() {
   const { data: currentRoundId } = useReadContract({
-    address: CONTRACTS.SpellBlockCore as `0x${string}`,
+    address: CONTRACTS[base.id].spellBlockCore as `0x${string}`,
     abi: SPELLBLOCK_CORE_ABI,
     functionName: 'currentRoundId',
     chainId: base.id,
